@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lumina Family OS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        /* --- VARIABLES --- */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        :root {
+            --bg-body: #f3f4f6;
+            --text-main: #1f2937;
+            --text-muted: #9ca3af;
+            --border: #e5e7eb;
+        }
+        body { font-family: 'Nunito', sans-serif; background: var(--bg-body); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+
+        /* --- LAYOUT --- */
+        .app-layout {
+            display: grid;
+            grid-template-columns: 90px 1fr;
+            height: 100vh;
+            max-width: 2400px;
+            margin: 0 auto;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            background: white;
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 24px 0; gap: 20px; z-index: 40;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.01);
+        }
+        .logo-box {
+            width: 52px; height: 52px; border-radius: 14px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white; display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; box-shadow: 0 4px 10px rgba(37,99,235,0.2);
+            margin-bottom: 12px;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 64px; height: 64px; border-radius: 18px;
+            color: var(--text-muted); transition: 0.2s; cursor: pointer;
+        }
+        .nav-item i { font-size: 1.5rem; margin-bottom: 4px; }
+        .nav-item span { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
+        .nav-item:hover { background: #f9fafb; color: var(--text-main); }
+        .nav-item.active { background: #eff6ff; color: #3b82f6; box-shadow: 0 4px 12px rgba(59,130,246,0.2); }
+
+        /* --- MAIN AREA --- */
+        .main-area { display: flex; flex-direction: column; height: 100vh; overflow: hidden; position: relative; }
+        
+        /* --- HEADER --- */
+        .header-bar {
+            padding: 16px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: white; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 30;
+        }
+        .header-title { font-size: 2rem; font-weight: 800; color: #1f2937; letter-spacing: -0.03em; }
+        
+        /* Weather Badge */
+        .header-weather { 
+            display: flex; align-items: center; gap: 10px; font-size: 1.1rem; font-weight: 700; 
+            background: #fffbeb; padding: 8px 16px; border-radius: 50px; border: 1px solid #fcd34d; cursor: pointer;
+            color: #d97706; transition: 0.2s;
+        }
+        .header-weather.night { background: linear-gradient(135deg, #1e1b4b, #312e81); border-color: #312e81; color: #e0e7ff; }
+        .header-weather.sunny { background: linear-gradient(135deg, #fff7ed, #ffedd5); border-color: #fdba74; color: #c2410c; }
+        .header-weather.rain { background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: #93c5fd; color: #1e40af; }
+        
+        /* Dropdown Menu */
+        .dropdown-menu {
+            position: absolute; top: 100%; right: 0; margin-top: 8px; width: 200px;
+            background: white; border-radius: 16px; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.15);
+            border: 1px solid var(--border); display: none; flex-direction: column; z-index: 50; overflow: hidden;
+        }
+        .dropdown-menu.open { display: flex; animation: slideDown 0.2s ease; }
+        .dropdown-item {
+            padding: 12px 16px; text-align: left; font-weight: 600; color: #4b5563;
+            transition: 0.1s; display: flex; align-items: center; gap: 10px; cursor: pointer;
+        }
+        .dropdown-item:hover { background: #f3f4f6; color: #1f2937; }
+
+        /* --- VIEW CONTAINER --- */
+        .view-container { padding: 30px 40px; flex: 1; overflow-y: auto; display: none; animation: fadeIn 0.3s ease; padding-bottom: 100px; }
+        .view-container.active { display: block; height: 100%; }
+
+        /* --- CALENDAR --- */
+        .cal-wrapper { background: white; border-radius: 24px; padding: 24px; border: 1px solid var(--border); height: 100%; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+        
+        /* Month Grid */
+        .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); flex: 1; border-top: 1px solid var(--border); }
+        .month-cell { border-right: 1px solid #f3f4f6; border-bottom: 1px solid #f3f4f6; padding: 6px; cursor: pointer; position: relative; transition: 0.1s; }
+        .month-cell:hover { background: #f9fafb; }
+        .month-cell.today { background: #f0f9ff; }
+        .month-cell.selected { background: #eef2ff; box-shadow: inset 0 0 0 2px #3b82f6; }
+        .event-chip { font-size: 0.65rem; padding: 1px 4px; border-radius: 4px; margin-bottom: 1px; color: white; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Week Grid */
+        .week-scroll { flex: 1; overflow-y: auto; position: relative; }
+        .week-grid { display: grid; grid-template-columns: 60px repeat(7, 1fr); min-height: 1000px; }
+        .time-col { border-right: 1px solid var(--border); background: #fafafa; }
+        .time-slot { height: 80px; border-bottom: 1px solid #f3f4f6; font-size: 0.7rem; color: #9ca3af; padding: 8px; text-align: right; font-weight: 600; }
+        .day-col { border-right: 1px solid #f3f4f6; position: relative; background: repeating-linear-gradient(transparent 0 79px, #f9fafb 79px 80px); }
+        
+        .event-block { 
+            position: absolute; left: 2px; right: 2px; padding: 4px; border-radius: 6px; 
+            font-size: 0.7rem; color: #1f2937; overflow: hidden; cursor: pointer;
+            border-left: 4px solid rgba(0,0,0,0.2); box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            z-index: 10; display: flex; flex-direction: column;
+        }
+        .event-block:hover { z-index: 20; transform: scale(1.02); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        
+        /* Week Header */
+        .day-header-cell {
+            padding: 16px 8px; text-align: center; border-left: 1px solid var(--border);
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .day-header-cell.today .day-num { color: #3b82f6; }
+        .day-name { font-size: 0.7rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px; }
+        .day-num { font-size: 1.4rem; font-weight: 800; color: #1f2937; line-height: 1; }
+
+        /* --- CHORES & ROUTINES --- */
+        .chore-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+        .chore-col {
+            background: white; border-radius: 24px; padding: 20px;
+            border: 1px solid var(--border); display: flex; flex-direction: column;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); height: 100%; min-height: 450px;
+            border-top-width: 8px; transition: transform 0.2s;
+        }
+        .person-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .person-name { font-size: 1.4rem; font-weight: 800; color: #1f2937; }
+        .star-badge { background: #fffbeb; color: #d97706; padding: 4px 10px; border-radius: 99px; font-weight: 800; font-size: 0.85rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        
+        .progress-bg { width: 100%; background: #f3f4f6; height: 10px; border-radius: 20px; margin-bottom: 20px; overflow: hidden; }
+        .progress-fill { height: 100%; transition: width 0.5s ease; border-radius: 20px; }
+
+        /* Task Cards */
+        .task-card {
+            display: flex; align-items: center; padding: 14px; margin-bottom: 12px;
+            background: #f9fafb; border-radius: 16px; cursor: pointer;
+            transition: all 0.2s; border: 1px solid transparent;
+        }
+        .task-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.05); background: #fff; border-color: #e5e7eb; }
+        .task-card.completed { background: #ecfdf5; opacity: 0.8; transform: scale(0.98); border-color: #10b981; }
+        .task-card.completed .task-text { text-decoration: line-through; color: #059669; }
+        .task-emoji { font-size: 1.6rem; margin-right: 14px; }
+        .task-text { font-size: 1rem; font-weight: 700; color: #374151; flex: 1; }
+        .task-check {
+            width: 28px; height: 28px; background: white; border: 2px solid #d1d5db; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: white; transition: 0.2s;
+        }
+        .task-card.completed .task-check { background: #10b981; border-color: #10b981; }
+
+        /* --- MODALS --- */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 100; }
+        .modal.open { display: flex; animation: popIn 0.2s; }
+        .modal-box { background: white; padding: 32px; border-radius: 28px; width: 90%; max-width: 500px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto; }
+
+        /* --- AMBIENT --- */
+        #ambient { position: fixed; inset: 0; background: #111; color: white; z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.5s; background-size: cover; background-position: center; }
+        #ambient.active { opacity: 1; pointer-events: auto; }
+
+        /* --- UTILS --- */
+        .card { background: white; border-radius: 24px; padding: 24px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 24px; }
+        .toggle-btn { padding: 6px 16px; border-radius: 99px; font-weight: 700; font-size: 0.85rem; transition: 0.2s; }
+        .toggle-btn.active { background: #eff6ff; color: #3b82f6; box-shadow: 0 2px 4px rgba(59,130,246,0.1); }
+        .toggle-btn.inactive { color: #9ca3af; hover:bg-gray-50; }
+
+        @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Mobile Nav */
+        .bottom-nav { display: none; position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid var(--border); padding: 10px 0; justify-content: space-around; z-index: 40; padding-bottom: env(safe-area-inset-bottom); height: 70px; }
+        @media (max-width: 768px) { 
+            .app-layout { grid-template-columns: 1fr; display: block; }
+            .sidebar { display: none; } 
+            .bottom-nav { display: flex; }
+            .header-bar { padding: 16px; }
+            .header-time { display: none; }
+        }
+        .bottom-nav .nav-item { flex: 1; height: 100%; }
+    </style>
+</head>
+<body>
+
+    <div id="ambient" onclick="toggleSleep(false)">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="relative z-10 text-center">
+            <div id="ambTime" class="text-9xl font-thin tracking-tighter">12:00</div>
+            <div id="ambDate" class="text-3xl font-light tracking-widest uppercase mt-4">Monday, Jan 1</div>
+            <div id="ambWeather" class="text-xl font-medium mt-4 text-yellow-400">--°F</div>
+            
+            <!-- ASTRONOMY DATA -->
+            <div class="mt-8 flex gap-8 justify-center text-white/80 text-sm font-bold uppercase tracking-widest">
+                <div class="flex flex-col items-center"><i class="fa-solid fa-sun text-yellow-500 text-xl mb-2"></i> <span id="astroSunrise">--:--</span></div>
+                <div class="flex flex-col items-center"><i class="fa-solid fa-moon text-blue-200 text-xl mb-2"></i> <span id="astroSunset">--:--</span></div>
+                <div class="flex flex-col items-center"><i class="fa-solid fa-circle text-gray-300 text-xl mb-2"></i> <span id="astroMoon">--</span></div>
+            </div>
+
+            <div class="mt-12 text-sm opacity-60 animate-pulse">Tap to Wake</div>
+            <button onclick="shuffleSleepBg(event)" class="mt-8 px-4 py-2 bg-white/20 rounded-full text-xs hover:bg-white/40 transition backdrop-blur-sm">Shuffle Photo</button>
+        </div>
+    </div>
+
+    <div class="app-layout">
+        <nav class="sidebar">
+            <div class="logo-box"><i class="fa-solid fa-house-chimney"></i></div>
+            <div class="nav-item active" onclick="setView('routines')"><i class="fa-solid fa-clipboard-check text-teal-500"></i><span>Routines</span></div>
+            <div class="nav-item" onclick="setView('calendar')"><i class="fa-solid fa-calendar-days text-blue-500"></i><span>Calendar</span></div>
+            <div class="nav-item" onclick="setView('chores')"><i class="fa-solid fa-broom text-purple-500"></i><span>Chores</span></div>
+            <div class="nav-item" onclick="setView('meals')"><i class="fa-solid fa-utensils text-orange-400"></i><span>Meals</span></div>
+            <div class="nav-item" onclick="setView('lists')"><i class="fa-solid fa-basket-shopping text-green-500"></i><span>Lists</span></div>
+            <div class="nav-item" onclick="setView('bank')"><i class="fa-solid fa-piggy-bank text-yellow-500"></i><span>Bank</span></div>
+            <div style="flex:1"></div>
+            <div class="nav-item" onclick="toggleSleep(true)"><i class="fa-solid fa-moon text-slate-400"></i><span>Sleep</span></div>
+            <div class="nav-item" onclick="openModal('settingsModal')"><i class="fa-solid fa-gear text-slate-400"></i><span>Config</span></div>
+        </nav>
+
+        <div class="main-area">
+            <header class="header-bar">
+                <div class="flex items-center gap-4"><h1 class="header-title" id="familyNameDisplay">Family Hub</h1><div class="text-2xl font-light text-gray-400 hidden sm:block" id="headerTime">12:00</div></div>
+                <div class="flex items-center gap-4">
+                    <div class="header-weather" id="headerWeatherWidget" onclick="fetchWeather()"><i class="fa-solid fa-cloud-sun"></i> <span id="weatherTemp">--°F</span></div>
+                    <div class="relative">
+                        <button onclick="toggleDropdown()" class="bg-blue-600 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-blue-700 transition flex items-center gap-2"><i class="fa-solid fa-plus"></i> Add</button>
+                        <div id="addDropdown" class="dropdown-menu">
+                            <div class="dropdown-item" onclick="openModal('taskModal'); toggleDropdown()"><i class="fa-solid fa-clipboard-check text-teal-500"></i> Task</div>
+                            <div class="dropdown-item" onclick="openAddEvent(); toggleDropdown()"><i class="fa-solid fa-calendar text-blue-500"></i> Event</div>
+                            <div class="dropdown-item" onclick="openModal('mealModal'); toggleDropdown()"><i class="fa-solid fa-utensils text-orange-500"></i> Meal</div>
+                            <div class="dropdown-item" onclick="openInputModal('Add Item', addListItem); toggleDropdown()"><i class="fa-solid fa-basket-shopping text-green-500"></i> Item</div>
+                        </div>
+                    </div>
+                    <button onclick="openModal('settingsModal')" class="md:hidden text-gray-500 text-xl px-2"><i class="fa-solid fa-gear"></i></button>
+                </div>
+            </header>
+
+            <!-- VIEW: ROUTINES -->
+            <div id="view-routines" class="view-container active">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 ml-2">Daily Routines</h2>
+                <div id="routineBoard" class="chore-board"></div>
+            </div>
+            
+            <!-- VIEW: CHORES -->
+            <div id="view-chores" class="view-container">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 ml-2">Household Chores</h2>
+                <div id="choreBoard" class="chore-board"></div>
+            </div>
+
+            <!-- VIEW: CALENDAR -->
+            <div id="view-calendar" class="view-container" style="padding: 20px;">
+                <div class="cal-wrapper">
+                    <div class="flex justify-between items-center p-4 border-b border-gray-200 bg-white z-20">
+                         <div class="flex gap-1 bg-gray-100 p-1 rounded-full">
+                             <button onclick="setCalMode('month')" id="btnMonth" class="toggle-btn inactive">Month</button>
+                             <button onclick="setCalMode('week')" id="btnWeek" class="toggle-btn active">Week</button>
+                         </div>
+                         <div class="flex items-center gap-4">
+                             <button onclick="navCal(-1)"><i class="fa-solid fa-chevron-left text-xl text-gray-400 hover:text-black"></i></button>
+                             <h2 id="calRangeDisplay" class="text-xl font-bold text-gray-800">Month</h2>
+                             <button onclick="navCal(1)"><i class="fa-solid fa-chevron-right text-xl text-gray-400 hover:text-black"></i></button>
+                         </div>
+                         <button onclick="openAddEvent()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm">+ Event</button>
+                    </div>
+                    
+                    <div id="monthViewContainer" class="flex flex-col flex-1 h-full hidden">
+                         <div class="grid grid-cols-7 text-center bg-white z-10 border-b border-gray-200 text-xs font-bold text-gray-400 py-2" id="monthHeaders"></div>
+                         <div id="monthGrid" class="month-grid"></div>
+                    </div>
+
+                    <div id="weekViewContainer" class="flex flex-col flex-1 h-full overflow-hidden">
+                         <div class="grid grid-template-columns-8 border-b bg-white z-10" style="grid-template-columns: 60px repeat(7, 1fr);" id="weekHeader"></div>
+                         <div class="week-scroll">
+                             <div class="week-grid">
+                                 <div class="time-col">
+                                     <div class="time-slot">8 AM</div><div class="time-slot">9 AM</div><div class="time-slot">10 AM</div><div class="time-slot">11 AM</div>
+                                     <div class="time-slot">12 PM</div><div class="time-slot">1 PM</div><div class="time-slot">2 PM</div><div class="time-slot">3 PM</div>
+                                     <div class="time-slot">4 PM</div><div class="time-slot">5 PM</div><div class="time-slot">6 PM</div><div class="time-slot">7 PM</div>
+                                     <div class="time-slot">8 PM</div><div class="time-slot">9 PM</div>
+                                 </div>
+                                 <div id="wc0" class="day-col"></div> <div id="wc1" class="day-col"></div> <div id="wc2" class="day-col"></div> <div id="wc3" class="day-col"></div>
+                                 <div id="wc4" class="day-col"></div> <div id="wc5" class="day-col"></div> <div id="wc6" class="day-col"></div>
+                             </div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-meals" class="view-container"><div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><div class="card"><h3>Menu <button onclick="openMealModal()" class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full">+ Plan</button></h3><div id="mealList" class="space-y-3 mt-2"></div><button onclick="mealsToShop()" class="w-full mt-4 py-2 border border-dashed border-gray-300 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50">Add Ingredients to List</button></div><div class="card"><h3>Recipe Finder</h3><div class="flex gap-2 mb-4 mt-2"><input id="recipeSearch" class="flex-1 border p-2 rounded-lg text-sm" placeholder="Search (e.g. Pasta)"><button onclick="searchRecipes()" class="bg-blue-600 text-white px-4 rounded-lg text-sm font-bold">Go</button></div><div id="recipeResults" class="space-y-2 max-h-60 overflow-y-auto"></div></div></div></div>
+            <div id="view-lists" class="view-container"><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div class="card"><h3>Shopping <button onclick="clearCheckedList()" class="text-sm text-red-500">Clear</button></h3><div class="flex gap-2 mb-4 mt-2"><input id="listInput" class="flex-1 border p-2 rounded-lg text-sm" placeholder="Add item..." onkeydown="if(event.key==='Enter') addListItem()"><button onclick="addListItem()" class="bg-purple-500 text-white px-4 rounded-lg font-bold">Add</button></div><div id="shoppingListDisplay" class="space-y-2 max-h-96 overflow-y-auto"></div></div><div class="card"><h3>Pantry <button onclick="openInputModal('Item Name', addPantryItem)" class="text-sm text-blue-600">+ Item</button></h3><div id="pantryList" class="space-y-2 mt-2 max-h-96 overflow-y-auto"></div></div></div></div>
+            <div id="view-wellness" class="view-container"><div class="card h-full"><h3>Wellness <button onclick="openWellnessModal()" class="text-sm text-rose-500">+ Habit</button></h3><div id="wellnessList" class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div></div></div>
+            <div id="view-bank" class="view-container"><div class="grid grid-cols-1 md:grid-cols-2 gap-8"><div class="card"><h3>Balances</h3><div id="bankList" class="space-y-4 mt-2"></div></div><div class="card"><h3>Rewards <button onclick="openModal('rewardModal')" class="text-xs text-blue-500 ml-2">+ New</button></h3><div id="rewardsList" class="space-y-2 mt-2"></div></div></div></div>
+        </div>
+
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="setView('routines')"><i class="fa-solid fa-clipboard-check"></i><span>Routines</span></div>
+            <div class="nav-item" onclick="setView('calendar')"><i class="fa-solid fa-calendar-days"></i><span>Cal</span></div>
+            <div class="nav-item" onclick="setView('chores')"><i class="fa-solid fa-broom"></i><span>Chores</span></div>
+            <div class="nav-item" onclick="setView('meals')"><i class="fa-solid fa-utensils"></i><span>Meals</span></div>
+            <div class="nav-item" onclick="setView('lists')"><i class="fa-solid fa-basket-shopping"></i><span>Lists</span></div>
+        </nav>
+    </div>
+
+    <!-- MODALS -->
+    <div id="quickAddModal" class="modal"><div class="modal-box"><h3 class="text-2xl font-bold mb-2">Quick Add</h3><input id="qaInput" class="w-full border-2 border-gray-200 p-4 rounded-xl text-lg outline-none mb-6" placeholder="Type here..."><div class="flex justify-end gap-3"><button onclick="closeModal('quickAddModal')" class="px-6 py-2 font-bold text-gray-500">Cancel</button><button onclick="processQuickAdd()" class="px-8 py-2 font-bold bg-blue-600 text-white rounded-xl">Add</button></div></div></div>
+    <div id="settingsModal" class="modal"><div class="modal-box"><h3 class="text-xl font-bold mb-4">Settings</h3><div class="space-y-4"><input id="famNameInput" class="w-full border p-2 rounded-lg" placeholder="Family Name" onchange="updateFamName()"><input id="locInput" class="w-full border p-2 rounded-lg" placeholder="City (for Weather)" onchange="updateLocation()"><div id="setProfList" class="space-y-2 mb-2"></div><button onclick="addNewProfile()" class="text-blue-600 font-bold text-sm">+ Add Person</button><div class="flex justify-between border-t pt-4"><span class="font-bold">Show Holidays</span><input type="checkbox" id="holTog" onchange="toggleHolidays()" class="w-5 h-5 accent-blue-600"></div>
+    <!-- Photo Upload -->
+    <div class="flex justify-between items-center border-t pt-4"><span class="font-bold text-sm">Sleep Background</span><label class="cursor-pointer text-blue-500 text-sm font-bold hover:underline">Upload <input type="file" class="hidden" accept="image/*" onchange="uploadSleepBg(this)"></label></div>
+    <button onclick="resetApp()" class="w-full text-red-500 border border-red-100 py-2 rounded-lg font-bold mt-2">Factory Reset</button></div><button onclick="closeModal('settingsModal')" class="mt-4 w-full text-gray-400">Close</button></div></div>
+    
+    <!-- Event Modal -->
+    <div id="eventModal" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-xl mb-4">Add Event</h3>
+            <input id="evTitle" class="w-full border p-3 rounded-xl mb-3" placeholder="Event Title">
+            <div class="flex gap-2 mb-3">
+                <input id="evDate" type="date" class="w-full border p-3 rounded-xl">
+                <select id="evTime" class="border p-3 rounded-xl">
+                    <option value="08:00">8 AM</option><option value="09:00">9 AM</option><option value="10:00">10 AM</option>
+                    <option value="11:00">11 AM</option><option value="12:00">12 PM</option><option value="13:00">1 PM</option>
+                    <option value="14:00">2 PM</option><option value="15:00">3 PM</option><option value="16:00">4 PM</option>
+                    <option value="17:00">5 PM</option><option value="18:00">6 PM</option><option value="19:00">7 PM</option>
+                    <option value="20:00">8 PM</option>
+                </select>
+            </div>
+            <select id="evEmoji" class="w-full border p-3 rounded-xl mb-3 text-xl">
+                <option value="🌟">🌟 Star</option><option value="💡">💡 Idea</option><option value="📅">📅 Calendar</option><option value="🎵">🎵 Musical Note</option><option value="🚀">🚀 Rocket</option><option value="🌈">🌈 Rainbow</option><option value="🌹">🌹 Rose</option><option value="☕">☕ Coffee Cup</option><option value="📚">📚 Books</option><option value="🧠">🧠 Brain</option><option value="⚽">⚽ Soccer</option><option value="🌳">🌳 Tree</option><option value="🌙">🌙 Moon</option><option value="🍀">🍀 Clover</option><option value="⭐">⭐ Shooting Star</option><option value="🔥">🔥 Fire</option><option value="🎁">🎁 Gift</option><option value="🐱">🐱 Cat</option><option value="🐶">🐶 Dog</option><option value="🐬">🐬 Dolphin</option><option value="🌍">🌍 Earth</option><option value="🍔">🍔 Food</option><option value="🍕">🍕 Pizza</option><option value="🍩">🍩 Donut</option><option value="🦄">🦄 Unicorn</option><option value="🤖">🤖 Robot</option><option value="👾">👾 Game</option><option value="🏰">🏰 Castle</option><option value="🚗">🚗 Car</option><option value="✈️">✈️ Travel</option><option value="🎄">🎄 Christmas</option><option value="🎅">🎅 Santa</option><option value="🎃">🎃 Halloween</option><option value="🧨">🧨 Firecracker</option><option value="🏮">🏮 Lantern</option><option value="🎉">🎉 Party</option><option value="🎆">🎆 Fireworks</option><option value="🐇">🐇 Rabbit</option><option value="🥚">🥚 Egg</option><option value="💘">💘 Heart</option><option value="🔯">🔯 Star of David</option><option value="🕊️">🕊️ Dove</option><option value="🛠️">🛠️ Hammer</option><option value="🪔">🪔 Diya</option><option value="🛍️">🛍️ Shopping</option><option value="🎓">🎓 Grad</option><option value="🍾">🍾 Bottle</option>
+            </select>
+            <select id="evProf" class="w-full border p-3 rounded-xl mb-6"></select>
+            <div class="flex justify-end gap-3"><button onclick="closeModal('eventModal')" class="text-gray-500 font-bold">Cancel</button><button onclick="saveEvent()" class="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold">Save</button></div>
+        </div>
+    </div>
+
+    <!-- Task Modal -->
+    <div id="taskModal" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-xl mb-3">New Task</h3>
+            <label class="block text-xs font-bold text-gray-400 mb-1">Quick Pick</label>
+            <select id="tkPreset" class="w-full border p-2 rounded-xl mb-3 bg-gray-50" onchange="applyPreset()">
+                <option value="">-- Select --</option>
+                <optgroup label="Self Care">
+                    <option value="🚿 Shower">🚿 Shower</option><option value="🦷 Brush Teeth">🦷 Brush Teeth</option><option value="😴 Nap">😴 Nap</option><option value="🛁 Bath">🛁 Bath</option><option value="🏃 Exercise">🏃 Exercise</option><option value="📖 Read">📖 Read</option><option value="💧 Drink Water">💧 Drink Water</option><option value="🧘 Meditate">🧘 Meditate</option>
+                </optgroup>
+                <optgroup label="Cleaning">
+                    <option value="🛏️ Make Bed">🛏️ Make Bed</option><option value="🧹 Clean Room">🧹 Clean Room</option><option value="🧺 Laundry">🧺 Laundry</option><option value="🌪️ Vacuum">🌪️ Vacuum</option>
+                </optgroup>
+                <optgroup label="Helping">
+                    <option value="🍽️ Set Table">🍽️ Set Table</option><option value="🗑️ Take out Trash">🗑️ Take out Trash</option><option value="🐶 Feed Pet">🐶 Feed Pet</option>
+                </optgroup>
+                <optgroup label="School">
+                    <option value="📚 Homework">📚 Homework</option><option value="🎒 Pack Bag">🎒 Pack Bag</option><option value="✏️ Study">✏️ Study</option>
+                </optgroup>
+            </select>
+            <input id="tkDesc" class="w-full border p-3 rounded-xl mb-3" placeholder="Or type custom...">
+            <div class="grid grid-cols-2 gap-2 mb-4"><select id="tkType" class="w-full border p-3 rounded-xl"><option value="routine">Daily Routine</option><option value="chore">Ad-Hoc Chore</option></select><select id="tkProf" class="w-full border p-3 rounded-xl"></select></div>
+            <div class="flex justify-end gap-2"><button onclick="closeModal('taskModal')" class="text-gray-500 font-bold">Cancel</button><button onclick="saveTask()" class="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold">Save</button></div>
+        </div>
+    </div>
+    
+    <div id="mealModal" class="modal"><div class="modal-box"><h3 class="font-bold text-xl mb-4">Plan Meal</h3><input id="mlDesc" class="w-full border p-3 rounded-xl mb-4" placeholder="Description"><select id="mlType" class="w-full border p-3 rounded-xl mb-6"><option>Dinner</option><option>Lunch</option><option>Breakfast</option></select><div class="flex justify-end gap-3"><button onclick="closeModal('mealModal')" class="text-gray-500 font-bold">Cancel</button><button onclick="saveMeal()" class="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold">Save</button></div></div></div>
+    <div id="wellnessModal" class="modal"><div class="modal-box"><h3 class="font-bold text-xl mb-4">New Habit</h3><input id="wlName" class="w-full border p-3 rounded-xl mb-4" placeholder="Name (e.g. Vitamin C)"><select id="wlProf" class="w-full border p-3 rounded-xl mb-6"></select><div class="flex justify-end gap-3"><button onclick="closeModal('wellnessModal')" class="text-gray-500 font-bold">Cancel</button><button onclick="saveWell()" class="bg-rose-500 text-white px-6 py-2 rounded-xl font-bold">Save</button></div></div></div>
+    <div id="inputModal" class="modal"><div class="modal-box"><h3 class="font-bold text-xl mb-4" id="inpTitle">Input</h3><input id="inpVal" class="w-full border p-3 rounded-xl mb-4"><div class="flex justify-end gap-3"><button onclick="closeModal('inputModal')" class="text-gray-500 font-bold">Cancel</button><button onclick="submitInput()" class="bg-green-500 text-white px-6 py-2 rounded-xl font-bold">Save</button></div></div></div>
+    <div id="rewardModal" class="modal"><div class="modal-box"><div class="flex justify-between mb-4"><h3 class="font-bold text-xl">Add Reward</h3><button onclick="closeModal('rewardModal')" class="text-2xl text-gray-400">×</button></div><input id="rwName" class="w-full border p-2 rounded-xl mb-2" placeholder="Name"><input id="rwCost" type="number" class="w-full border p-2 rounded-xl mb-4" placeholder="Cost"><button onclick="saveReward()" class="w-full bg-yellow-500 text-white py-3 rounded-xl font-bold">Add</button></div></div>
+
+    <script>
+        const DB='lumina_verified_final_v27';
+        let data={familyName:'Family Hub',profiles:[{id:'p1',name:'Parent',color:'#5eb5b3',stars:0},{id:'p2',name:'Child',color:'#ffadad',stars:0}],tasks:[],events:[],meals:[],list:[],pantry:[],wellness:[],rewards:[{name:"Ice Cream",cost:10},{name:"Movie",cost:50}],holidays:{},settings:{holidays:true,location:'',sleepBg:''},lastReset:''};
+        let state={viewDate:new Date(),selDate:new Date(),ambient:false, calMode:'week', inputCb:null, sleepTimer:null};
+        const HOLIDAYS={'01-01':"New Year",'07-04':"July 4th",'10-31':"Halloween",'12-25':"Christmas"};
+        const DEFAULT_ROUTINES = [
+            {desc: "Brush Teeth", emoji: "🦷"}, {desc: "Make Bed", emoji: "🛏️"}, 
+            {desc: "Drink Water", emoji: "💧"}, {desc: "Read 20 Mins", emoji: "📚"}, {desc: "Exercise", emoji: "🏃"}, {desc: "Shower", emoji: "🚿"}
+        ];
+        
+        const WALLPAPERS = [
+            "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80",
+            "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80",
+            "https://images.unsplash.com/photo-1426604966848-d7adac402bff?auto=format&fit=crop&w=1920&q=80",
+            "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1920&q=80",
+            "https://images.unsplash.com/photo-1501854140884-074cf2b2b754?auto=format&fit=crop&w=1920&q=80"
+        ];
+
+        function init(){
+            const s=localStorage.getItem(DB); 
+            if(s) { try { data={...data,...JSON.parse(s)}; } catch(e){ localStorage.removeItem(DB); } }
+            
+            // Auto-Fill Routines
+            data.profiles.forEach(p => {
+                const hasRoutines = data.tasks.some(t => t.pid === p.id && t.type === 'routine');
+                if(!hasRoutines) {
+                     DEFAULT_ROUTINES.forEach(r => data.tasks.push({id:genId(), desc:r.desc, emoji:r.emoji, pid:p.id, type:'routine', done:false, stars:5}));
+                }
+            });
+            save();
+
+            const t=new Date().toISOString().split('T')[0];
+            if(data.lastReset!==t){
+                data.tasks.forEach(x=>{if(x.type==='routine')x.done=false});
+                data.wellness.forEach(w=>{if(!w.history)w.history=[]});
+                data.lastReset=t;save();
+            }
+            renderAll(); setInterval(renderTime,60000); renderTime(); fetchWeather(); fetchAstronomy();
+        }
+        function save(){localStorage.setItem(DB,JSON.stringify(data));renderAll();}
+        function renderAll(){
+            document.getElementById('familyNameDisplay').innerText=data.familyName;
+            if(state.calMode==='month') renderCal(); else renderWeekCal();
+            renderRoutines(); renderChores(); renderMeals(); renderList(); renderPantry(); renderBank(); 
+        }
+        function setView(id){
+            document.querySelectorAll('.view-container').forEach(e=>e.classList.remove('active'));
+            document.getElementById('view-'+id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
+            document.querySelectorAll(`.nav-item[onclick="setView('${id}')"]`).forEach(e=>e.classList.add('active'));
+        }
+        function openModal(id){document.getElementById(id).classList.add('open');}
+        function closeModal(id){document.getElementById(id).classList.remove('open');}
+        function toggleSleep(on){
+            state.ambient=on; const el=document.getElementById('ambient');
+            if(on){
+                el.classList.add('active');
+                if(data.settings.sleepBg && data.settings.sleepBg.startsWith('data:')) {
+                    el.style.backgroundImage=`url('${data.settings.sleepBg}')`; 
+                } else {
+                    shuffleSleepBg(); 
+                    state.sleepTimer = setInterval(shuffleSleepBg, 300000); // 5 mins
+                }
+            } else { 
+                el.classList.remove('active'); 
+                if(state.sleepTimer) clearInterval(state.sleepTimer);
+            }
+        }
+        function toggleDropdown(){ const m=document.querySelector('.dropdown-menu'); if(m) m.classList.toggle('open'); }
+        function genId() { return Math.random().toString(36).substr(2,9); }
+        function shuffleSleepBg(e) { 
+            if(e) e.stopPropagation();
+            if(data.settings.sleepBg && data.settings.sleepBg.startsWith('data:')) return;
+            const rand = WALLPAPERS[Math.floor(Math.random() * WALLPAPERS.length)];
+            document.getElementById('ambient').style.backgroundImage = `url('${rand}')`; 
+        }
+        function uploadSleepBg(input) {
+            if(input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) { try { data.settings.sleepBg = e.target.result; save(); alert("Background Updated!"); } catch(err) { alert("Image too large."); } };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        async function fetchWeather(){
+            const apiKey = '71e3466119mshfcff9f6775e9a01p16c9ecjsn646561b6676e';
+            const widget = document.getElementById('headerWeatherWidget');
+            const updateUI = (tempF, isDay) => { 
+                document.getElementById('weatherTemp').innerText = tempF + "°F"; 
+                document.getElementById('ambWeather').innerText = tempF + "°F"; 
+                
+                let iconClass = 'fa-cloud-sun';
+                if(isDay === 0) iconClass = 'fa-moon';
+                else if(tempF < 50) iconClass = 'fa-cloud-rain';
+                
+                widget.innerHTML = `<i class="fa-solid ${iconClass} text-xl"></i> <span id="weatherTemp">${tempF}°F</span>`;
+                widget.classList.remove('night','sunny','rain');
+                if(isDay === 0) widget.classList.add('night');
+                else if(tempF > 75) widget.classList.add('sunny');
+                else widget.classList.add('rain');
+            };
+            const doFetch = async (q) => {
+                try {
+                    const res = await fetch(`https://weatherapi-com.p.rapidapi.com/current.json?q=${q}`, { method: 'GET', headers: {'x-rapidapi-key': apiKey, 'x-rapidapi-host': 'weatherapi-com.p.rapidapi.com'} });
+                    const json = await res.json();
+                    if(json.current) updateUI(Math.round(json.current.temp_f), json.current.is_day);
+                    if(json.location && json.location.tz_id) { data.settings.timeZone = json.location.tz_id; save(); renderTime(); }
+                } catch(e) { console.log("Err",e); }
+            };
+            if(data.settings.location) { doFetch(data.settings.location); fetchAstronomy(data.settings.location); }
+            else if(navigator.geolocation) {
+                 navigator.geolocation.getCurrentPosition(p => {
+                     const q = `${p.coords.latitude},${p.coords.longitude}`;
+                     doFetch(q); fetchAstronomy(q);
+                 }, () => { doFetch('auto:ip'); fetchAstronomy('London'); });
+            } else { doFetch('auto:ip'); fetchAstronomy('London'); }
+        }
+        
+        async function fetchAstronomy(q){
+             const apiKey = '71e3466119mshfcff9f6775e9a01p16c9ecjsn646561b6676e';
+             try {
+                 const res = await fetch(`https://weatherapi-com.p.rapidapi.com/astronomy.json?q=${q}`, { method: 'GET', headers: {'x-rapidapi-key': apiKey, 'x-rapidapi-host': 'weatherapi-com.p.rapidapi.com'} });
+                 const json = await res.json();
+                 if(json.astronomy && json.astronomy.astro) {
+                     document.getElementById('astroSunrise').innerText = json.astronomy.astro.sunrise;
+                     document.getElementById('astroSunset').innerText = json.astronomy.astro.sunset;
+                     document.getElementById('astroMoon').innerText = json.astronomy.astro.moon_phase;
+                 }
+             } catch(e){console.log("Astro Err", e);}
+        }
+
+        function setCalMode(m) {
+            state.calMode = m;
+            document.getElementById('monthViewContainer').style.display = m==='month' ? 'flex' : 'none';
+            document.getElementById('weekViewContainer').style.display = m==='week' ? 'flex' : 'none';
+            document.getElementById('btnMonth').className = m==='month' ? 'toggle-btn active' : 'toggle-btn inactive';
+            document.getElementById('btnWeek').className = m==='week' ? 'toggle-btn active' : 'toggle-btn inactive';
+            renderAll();
+        }
+
+        function renderCal(){
+            if(state.calMode === 'week') { renderWeekCal(); return; }
+            const g=document.getElementById('monthGrid'); g.innerHTML='';
+            const h=document.getElementById('monthHeaders'); h.innerHTML='';
+            const y=state.viewDate.getFullYear(),m=state.viewDate.getMonth();
+            document.getElementById('calRangeDisplay').innerText=new Date(y,m).toLocaleString('default',{month:'long',year:'numeric'});
+            ['SUN','MON','TUE','WED','THU','FRI','SAT'].forEach(d=> h.innerHTML+=`<div class="p-2 font-bold text-gray-400 text-xs">${d}</div>`);
+            const f=new Date(y,m,1).getDay(), d=new Date(y,m+1,0).getDate();
+            for(let i=0;i<f;i++)g.innerHTML+=`<div class="month-cell bg-gray-50"></div>`;
+            for(let i=1;i<=d;i++){
+                const iso=new Date(y,m,i).toISOString().split('T')[0];
+                const isTod=new Date().toISOString().split('T')[0]===iso;
+                const hol=data.settings.holidays?HOLIDAYS[iso.substring(5)]:null;
+                const evs=data.events.filter(e=>e.date===iso);
+                const chips=evs.map(e=>{const p=data.profiles.find(x=>x.id===e.pid)||{color:'#ccc'};return `<div class="event-chip" style="background:${p.color}">${e.emoji||''} ${e.title}</div>`}).join('');
+                g.innerHTML+=`<div class="month-cell ${isTod?'today':''}" onclick="openAddEvent('${iso}')"><span class="text-sm font-bold ${hol?'text-red-500':''}">${i}</span>${hol?`<div class="text-[10px] text-red-500 font-bold leading-none">${hol}</div>`:''}${chips}</div>`;
+            }
+        }
+
+        function renderWeekCal() {
+            const start = getStartOfWeek(state.viewDate);
+            const days = [];
+            for(let i=0; i<7; i++) { const d=new Date(start); d.setDate(start.getDate()+i); days.push(d); }
+            document.getElementById('calRangeDisplay').innerText = `${days[0].toLocaleDateString([],{month:'short',day:'numeric'})} - ${days[6].toLocaleDateString([],{month:'short',day:'numeric'})}`;
+            
+            document.getElementById('weekHeader').innerHTML = `<div class="border-r bg-gray-50"></div>` + days.map((d,i) => {
+                 const iso = d.toISOString().split('T')[0];
+                 const isToday = new Date().toISOString().split('T')[0] === iso;
+                 return `<div class="day-header-cell ${isToday?'today':''}"><div class="day-name">${d.toLocaleDateString('en-US',{weekday:'short'})}</div><div class="day-num">${d.getDate()}</div></div>`;
+            }).join('');
+
+            days.forEach((d, i) => {
+                const iso = d.toISOString().split('T')[0];
+                const colEl = document.getElementById(`wc${i}`); colEl.innerHTML = '';
+                const evs = data.events.filter(e => e.date === iso);
+                evs.forEach(e => {
+                    const h = parseInt(e.time.split(':')[0]);
+                    if(h >= 8 && h <= 20) {
+                        const top = (h - 8) * 80;
+                        const p = data.profiles.find(x=>x.id===e.pid)||{color:'#ccc'};
+                        colEl.innerHTML += `<div class="event-block" onclick="delEv('${e.id}')" style="top:${top}px;border-left-color:${p.color};background:${p.color}20"><div class="event-time-lbl">${e.time}</div><div class="event-title-lbl">${e.emoji||''} ${e.title}</div></div>`;
+                    }
+                });
+            });
+        }
+
+        function navCal(d) { 
+            if(state.calMode==='month') state.viewDate.setMonth(state.viewDate.getMonth()+d);
+            else state.viewDate.setDate(state.viewDate.getDate()+(d*7));
+            renderAll();
+        }
+        function getStartOfWeek(date) { const d = new Date(date); const day = d.getDay(); const diff = d.getDate() - day + (day === 0 ? -6 : 1); return new Date(d.setDate(diff)); }
+        function hexToRgbA(hex, alpha){ let c; if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){ c=hex.substring(1).split(''); if(c.length==3){c=[c[0],c[0],c[1],c[1],c[2],c[2]];} c='0x'+c.join(''); return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+alpha+')';} return hex; }
+
+        function renderBoard(elId, type){
+            document.getElementById(elId).innerHTML=data.profiles.map(p=>{
+                const ts=data.tasks.filter(t=>t.pid===p.id && t.type===type);
+                const pct=ts.length?Math.round((ts.filter(t=>t.done).length/ts.length)*100):0;
+                return `<div class="chore-col" style="border-top-color:${p.color}"><div class="person-header"><span class="person-name" style="color:${p.color}">${p.name}</span><span class="star-badge">🌟 ${p.stars}</span></div><div class="progress-bg"><div class="progress-fill" style="width:${pct}%;background:${p.color}"></div></div><div class="flex-1 overflow-y-auto space-y-2">${ts.map(t=>`<div class="task-card ${t.done?'completed':''}" onclick="togTask('${t.id}')"><span class="task-emoji">${t.emoji||'📝'}</span><span class="task-text">${t.desc}</span><div class="task-check"><i class="fa-solid fa-check"></i></div></div>`).join('')}</div><button onclick="openTaskModal('${p.id}','${type}')" class="w-full mt-4 py-3 border-2 border-dashed border-blue-200 rounded-xl text-blue-400 font-bold hover:bg-blue-50">+ ${type==='routine'?'Routine':'Chore'}</button></div>`;
+            }).join('');
+        }
+        function renderRoutines(){renderBoard('routineBoard','routine');}
+        function renderChores(){renderBoard('choreBoard','chore');}
+        function openTaskModal(pid,type){document.getElementById('tkDesc').value='';document.getElementById('tkProf').innerHTML=data.profiles.map(p=>`<option value="${p.id}" ${p.id===pid?'selected':''}>${p.name}</option>`).join('');state.addTaskType=type;openModal('taskModal');}
+        function saveTask(){const d=document.getElementById('tkDesc').value, p=document.getElementById('tkProf').value, e=document.getElementById('tkEmoji')?document.getElementById('tkEmoji').value:'📝'; if(d){data.tasks.push({id:genId(),desc:d,emoji:e,pid:p,type:state.addTaskType,done:false,stars:5});save();closeModal('taskModal');}}
+        function togTask(id){const t=data.tasks.find(x=>x.id==id);t.done=!t.done;if(t.done){confetti({particleCount:50,spread:60,origin:{y:0.6}});data.profiles.find(x=>x.id==t.pid).stars+=5;}save();}
+        function applyPreset(){const v=document.getElementById('tkPreset').value; if(v){const[e, ...rest]=v.split(' ');document.getElementById('tkEmoji').value=e;document.getElementById('tkDesc').value=rest.join(' ');}}
+        
+        function openAddEvent(date){document.getElementById('evDate').value=date||new Date().toISOString().split('T')[0]; document.getElementById('evProf').innerHTML=data.profiles.map(p=>`<option value="${p.id}">${p.name}</option>`).join(''); openModal('eventModal'); }
+        function saveEvent(){ const t=document.getElementById('evTitle').value; if(t){ data.events.push({id:Date.now(),title:t,date:document.getElementById('evDate').value,time:document.getElementById('evTime').value,emoji:document.getElementById('evEmoji').value,pid:document.getElementById('evProf').value}); save(); closeModal('eventModal'); } }
+        function delEv(id){if(confirm("Delete event?")){data.events=data.events.filter(x=>x.id!=id);save();}}
+
+        async function searchRecipes(){const q=document.getElementById('recipeSearch').value;const r=await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${q}`).then(res=>res.json());document.getElementById('recipeResults').innerHTML=r.meals?r.meals.slice(0,5).map(m=>`<div class="flex items-center gap-3 p-2 border rounded hover:bg-gray-50 cursor-pointer" onclick="addMealRec('${m.strMeal}')"><img src="${m.strMealThumb}/preview" class="w-10 h-10 rounded"><div class="text-sm font-bold">${m.strMeal}</div></div>`).join(''):'No results.';}
+        function addMealRec(n){data.meals.push({id:genId(),desc:n,type:'Dinner'});save();alert("Added");}
+        function openMealModal(){document.getElementById('mlDesc').value='';openModal('mealModal');}
+        function saveMeal(){const d=document.getElementById('mlDesc').value;if(d){data.meals.push({id:genId(),desc:d,type:document.getElementById('mlType').value});save();closeModal('mealModal');}}
+        function renderMeals(){document.getElementById('mealList').innerHTML=data.meals.map(m=>`<div class="p-3 bg-blue-50 rounded-lg flex justify-between text-sm"><div><b>${m.type}</b> ${m.desc}</div><button onclick="delMeal('${m.id}')" class="text-red-400">×</button></div>`).join('');}
+        function delMeal(id){data.meals=data.meals.filter(x=>x.id!=id);save();}
+        function mealsToShop(){
+            if(data.meals.length === 0) { alert("No meals planned!"); return; }
+            data.meals.forEach(m=>{data.list.push({id:genId(),text:`Ingr: ${m.desc}`,checked:false});});
+            save(); renderList(); alert("Ingredients Added!"); setView('lists');
+        }
+        function renderList(){document.getElementById('shoppingListDisplay').innerHTML=data.list.map(i=>`<div class="flex items-center gap-3 p-2 border-b"><input type="checkbox" ${i.checked?'checked':''} onchange="togList('${i.id}')" class="w-5 h-5"><span class="flex-1 ${i.checked?'line-through text-gray-400':''}">${i.text}</span><button onclick="delList('${i.id}')" class="text-gray-300 hover:text-red-500">×</button></div>`).join('');}
+        function addListItem(v){ if(v) {data.list.push({id:genId(),text:v,checked:false}); save();} }
+        function togList(id){const i=data.list.find(x=>x.id==id);i.checked=!i.checked;save();}
+        function delList(id){data.list=data.list.filter(x=>x.id!=id);save();}
+        function clearCheckedList(){data.list=data.list.filter(x=>!x.checked);save();}
+        function renderPantry(){document.getElementById('pantryList').innerHTML=data.pantry.map(i=>`<div class="flex justify-between p-2 bg-slate-50 rounded mb-1 text-sm"><span class="font-bold">${i.name}</span><button onclick="delPantry('${i.id}')" class="text-red-400">×</button></div>`).join('');}
+        function openInputModal(t, cb){ document.getElementById('inpTitle').innerText=t; state.inputCb=cb; openModal('inputModal'); }
+        function submitInput(){ const v=document.getElementById('inpVal').value; if(v && state.inputCb) state.inputCb(v); closeModal('inputModal'); document.getElementById('inpVal').value=''; }
+        function addPantryItem(v){if(v)data.pantry.push({id:genId(),name:v,status:'ok'});save();}
+        function delPantry(id){data.pantry=data.pantry.filter(x=>x.id!=id);save();}
+        function renderWellness(){const t=new Date().toISOString().split('T')[0];document.getElementById('wellnessList').innerHTML=data.wellness.map(w=>{const done=w.history&&w.history.includes(t); const p=data.profiles.find(x=>x.id==w.pid)||{name:'Family'};return `<div class="flex items-center gap-3 p-3 bg-rose-50 rounded-xl"><input type="checkbox" ${done?'checked':''} onchange="togWell('${w.id}')" class="w-5 h-5 accent-rose-500"><div><div class="font-bold text-rose-900">${w.name}</div><div class="text-xs text-rose-400">${p.name}</div></div><button onclick="delWell('${w.id}')" class="ml-auto text-rose-300">×</button></div>`;}).join('');}
+        function openWellnessModal(){document.getElementById('wlName').value='';document.getElementById('wlProf').innerHTML=data.profiles.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');openModal('wellnessModal');}
+        function saveWell(){const n=document.getElementById('wlName').value;if(n){data.wellness.push({id:Date.now(),name:n,pid:document.getElementById('wlProf').value,history:[]});save();closeModal('wellnessModal');}}
+        function togWell(id){const w=data.wellness.find(x=>x.id==id),t=new Date().toISOString().split('T')[0];if(!w.history)w.history=[];if(w.history.includes(t))w.history=w.history.filter(x=>x!=t);else w.history.push(t);save();}
+        function delWell(id){data.wellness=data.wellness.filter(x=>x.id!=id);save();}
+        function renderBank(){document.getElementById('bankList').innerHTML=data.profiles.map(p=>`<div class="flex justify-between p-3 border rounded-lg"><span class="font-bold">${p.name}</span><div class="flex gap-2"><button onclick="modBank('${p.id}',-1)">-</button><span class="text-yellow-500 font-bold">${p.stars}⭐</span><button onclick="modBank('${p.id}',1)">+</button></div></div>`).join(''); document.getElementById('rewardsList').innerHTML=data.rewards.map(r=>`<div class="flex justify-between p-2 hover:bg-gray-50 cursor-pointer" onclick="redeem('${r.name}',${r.cost})"><span>${r.name}</span><b>${r.cost}</b></div>`).join('');}
+        function modBank(pid,d){const p=data.profiles.find(x=>x.id==pid);p.stars+=d;save();}
+        function redeem(n,c){const p=data.profiles[0];if(p.stars>=c && confirm(`Redeem ${n}?`)){p.stars-=c;save();}else alert("Not enough stars");}
+        function saveReward(){const n=document.getElementById('rwName').value, c=document.getElementById('rwCost').value; if(n&&c){data.rewards.push({name:n,cost:parseInt(c)});save();closeModal('rewardModal');}}
+
+        // --- SETTINGS ---
+        function openSettings(){document.getElementById('famNameInput').value=data.familyName;document.getElementById('holTog').checked=data.settings.holidays;document.getElementById('locInput').value=data.settings.location||'';renderSetProfs();openModal('settingsModal');}
+        function updateFamName(){data.familyName=document.getElementById('famNameInput').value;save();}
+        function updateLocation(){data.settings.location=document.getElementById('locInput').value; fetchWeather(); save();}
+        function renderSetProfs(){document.getElementById('setProfList').innerHTML=data.profiles.map(p=>`<div class="flex gap-2 mb-2"><input class="border p-1 flex-1" value="${p.name}" onchange="renProf('${p.id}',this.value)"><input type="color" value="${p.color}" onchange="colProf('${p.id}',this.value)" class="w-8 h-8 rounded"><button onclick="delProf('${p.id}')" class="text-red-500 px-2">×</button></div>`).join('');}
+        function renProf(id,v){data.profiles.find(x=>x.id==id).name=v;save();}
+        function colProf(id,v){data.profiles.find(x=>x.id==id).color=v;save();renderAll();}
+        function addNewProfile(){const newId=genId(); data.profiles.push({id:newId,name:'New',color:'#000',stars:0}); DEFAULT_ROUTINES.forEach(r => data.tasks.push({id:genId(), desc:r.desc, emoji:r.emoji, pid:newId, type:'routine', done:false, stars:5})); save();renderSetProfs();}
+        function delProf(id){if(confirm("Delete?")){data.profiles=data.profiles.filter(p=>p.id!=id);data.tasks=data.tasks.filter(t=>t.pid!=id);save();renderSetProfs();}}
+        function resetApp(){if(confirm("Reset?")){localStorage.removeItem(DB);location.reload();}}
+        function toggleHolidays(){data.settings.holidays=document.getElementById('holTog').checked;save();}
+        function processQuickAdd(){const v=document.getElementById('qaInput').value; if(v.startsWith('Task:')){const d=v.substring(5).trim();data.tasks.push({id:genId(),desc:d,pid:data.profiles[0].id,done:false,stars:5,type:'chore'});} else{data.list.push({id:genId(),text:v,checked:false});} document.getElementById('qaInput').value='';closeModal('quickAddModal');save();}
+        function openQuickAdd(){openModal('quickAddModal');setTimeout(()=>document.getElementById('qaInput').focus(),100);}
+        function renderTime(){
+            const n=new Date();
+            const tz = data.settings.timeZone || undefined;
+            const timeStr = n.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', timeZone: tz});
+            const dateStr = n.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', timeZone: tz});
+            document.getElementById('headerTime').innerText = timeStr;
+            document.getElementById('ambTime').innerText = timeStr;
+            document.getElementById('ambDate').innerText = dateStr;
+        }
+
+        init();
+    </script>
+</body>
+</html>
