@@ -215,7 +215,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
 @media(max-width:420px){.header-title{font-size:1.1rem}.header-weather{max-width:120px;overflow:hidden;text-overflow:ellipsis}.view-container{padding:12px 12px calc(90px + env(safe-area-inset-bottom))}.bottom-nav .nav-item{min-width:53px}.bottom-nav .nav-item span{font-size:10px}.lumina-hero-art{min-height:150px}.month-cell{padding:3px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 
-    </style>
+    .lumina-info{padding:24px clamp(20px,5vw,80px);background:#f7f9f7;color:#19344c;max-width:1200px;margin:0 auto}.lumina-info h2{font-size:22px;font-weight:800;margin-bottom:12px}.lumina-info details{background:white;border:1px solid #dfe8e8;padding:15px 18px;border-radius:14px;margin-bottom:8px}.lumina-info summary{cursor:pointer;font-weight:800}.lumina-info p{margin-top:12px;line-height:1.6;color:#506978} </style>
 </head>
 <body><a class="lumina-skip" href="#view-routines">Skip to main content</a><div class="lumina-sr" id="luminaNotice" role="status" aria-live="polite"></div>
 
@@ -266,7 +266,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
                             <div class="dropdown-item" onclick="openInputModal('Add Item', addListItem); toggleDropdown()"><i class="fa-solid fa-basket-shopping text-green-500"></i> Item</div>
                         </div>
                     </div>
-                    <button onclick="openModal('settingsModal')" class="md:hidden text-gray-500 text-xl px-2"><i class="fa-solid fa-gear"></i></button>
+                    <button onclick="openSettings()" class="md:hidden text-gray-500 text-xl px-2"><i class="fa-solid fa-gear"></i></button>
                 </div>
             </header>
 
@@ -337,14 +337,14 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
     </div>
 
     <!-- MODALS -->
-    <div id="quickAddModal" class="modal"><div class="modal-box"><h3 class="text-2xl font-bold mb-2">Quick Add</h3><input id="qaInput" class="w-full border-2 border-gray-200 p-4 rounded-xl text-lg outline-none mb-6" placeholder="Type here..."><div class="flex justify-end gap-3"><button onclick="closeModal('quickAddModal')" class="px-6 py-2 font-bold text-gray-500">Cancel</button><button onclick="processQuickAdd()" class="px-8 py-2 font-bold bg-blue-600 text-white rounded-xl">Add</button></div></div></div>
-    <div id="settingsModal" class="modal"><div class="modal-box"><h3 class="text-xl font-bold mb-4">Settings</h3><div class="space-y-4"><input id="famNameInput" class="w-full border p-2 rounded-lg" placeholder="Family Name" onchange="updateFamName()"><input id="locInput" class="w-full border p-2 rounded-lg" placeholder="City (for Weather)" onchange="updateLocation()"><div id="setProfList" class="space-y-2 mb-2"></div><button onclick="addNewProfile()" class="text-blue-600 font-bold text-sm">+ Add Person</button><div class="flex justify-between border-t pt-4"><span class="font-bold">Show Holidays</span><input type="checkbox" id="holTog" onchange="toggleHolidays()" class="w-5 h-5 accent-blue-600"></div>
+    <div id="quickAddModal" class="modal" role="dialog" aria-modal="true" aria-label="Quick add"><div class="modal-box"><h3 class="text-2xl font-bold mb-2">Quick Add</h3><input id="qaInput" class="w-full border-2 border-gray-200 p-4 rounded-xl text-lg outline-none mb-6" placeholder="Type here..."><div class="flex justify-end gap-3"><button onclick="closeModal('quickAddModal')" class="px-6 py-2 font-bold text-gray-500">Cancel</button><button onclick="processQuickAdd()" class="px-8 py-2 font-bold bg-blue-600 text-white rounded-xl">Add</button></div></div></div>
+    <div id="settingsModal" class="modal" role="dialog" aria-modal="true" aria-label="settings"><div class="modal-box"><h3 class="text-xl font-bold mb-4">Settings</h3><div class="space-y-4"><input id="famNameInput" class="w-full border p-2 rounded-lg" placeholder="Family Name" onchange="updateFamName()"><input id="locInput" class="w-full border p-2 rounded-lg" placeholder="City (for Weather)" onchange="updateLocation()"><div id="setProfList" class="space-y-2 mb-2"></div><button onclick="addNewProfile()" class="text-blue-600 font-bold text-sm">+ Add Person</button><div class="flex justify-between border-t pt-4"><span class="font-bold">Show Holidays</span><input type="checkbox" id="holTog" onchange="toggleHolidays()" class="w-5 h-5 accent-blue-600"></div>
     <!-- Photo Upload -->
     <div class="flex justify-between items-center border-t pt-4"><span class="font-bold text-sm">Sleep Background</span><label class="cursor-pointer text-blue-500 text-sm font-bold hover:underline">Upload <input type="file" class="hidden" accept="image/*" onchange="uploadSleepBg(this)"></label></div>
     <button onclick="resetApp()" class="w-full text-red-500 border border-red-100 py-2 rounded-lg font-bold mt-2">Factory Reset</button></div><button onclick="closeModal('settingsModal')" class="mt-4 w-full text-gray-400">Close</button></div></div>
     
     <!-- Event Modal -->
-    <div id="eventModal" class="modal">
+    <div id="eventModal" class="modal" role="dialog" aria-modal="true" aria-label="event">
         <div class="modal-box">
             <h3 class="font-bold text-xl mb-4">Add Event</h3>
             <input id="evTitle" class="w-full border p-3 rounded-xl mb-3" placeholder="Event Title">
@@ -367,7 +367,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
     </div>
 
     <!-- Task Modal -->
-    <div id="taskModal" class="modal">
+    <div id="taskModal" class="modal" role="dialog" aria-modal="true" aria-label="task">
         <div class="modal-box">
             <h3 class="font-bold text-xl mb-3">New Task</h3>
             <label class="block text-xs font-bold text-gray-400 mb-1">Quick Pick</label>
@@ -392,10 +392,10 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
         </div>
     </div>
     
-    <div id="mealModal" class="modal"><div class="modal-box"><h3 class="font-bold text-xl mb-4">Plan Meal</h3><input id="mlDesc" class="w-full border p-3 rounded-xl mb-4" placeholder="Description"><select id="mlType" class="w-full border p-3 rounded-xl mb-6"><option>Dinner</option><option>Lunch</option><option>Breakfast</option></select><div class="flex justify-end gap-3"><button onclick="closeModal('mealModal')" class="text-gray-500 font-bold">Cancel</button><button onclick="saveMeal()" class="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold">Save</button></div></div></div>
-    <div id="wellnessModal" class="modal"><div class="modal-box"><h3 class="font-bold text-xl mb-4">New Habit</h3><input id="wlName" class="w-full border p-3 rounded-xl mb-4" placeholder="Name (e.g. Vitamin C)"><select id="wlProf" class="w-full border p-3 rounded-xl mb-6"></select><div class="flex justify-end gap-3"><button onclick="closeModal('wellnessModal')" class="text-gray-500 font-bold">Cancel</button><button onclick="saveWell()" class="bg-rose-500 text-white px-6 py-2 rounded-xl font-bold">Save</button></div></div></div>
-    <div id="inputModal" class="modal"><div class="modal-box"><h3 class="font-bold text-xl mb-4" id="inpTitle">Input</h3><input id="inpVal" class="w-full border p-3 rounded-xl mb-4"><div class="flex justify-end gap-3"><button onclick="closeModal('inputModal')" class="text-gray-500 font-bold">Cancel</button><button onclick="submitInput()" class="bg-green-500 text-white px-6 py-2 rounded-xl font-bold">Save</button></div></div></div>
-    <div id="rewardModal" class="modal"><div class="modal-box"><div class="flex justify-between mb-4"><h3 class="font-bold text-xl">Add Reward</h3><button onclick="closeModal('rewardModal')" class="text-2xl text-gray-400">×</button></div><input id="rwName" class="w-full border p-2 rounded-xl mb-2" placeholder="Name"><input id="rwCost" type="number" class="w-full border p-2 rounded-xl mb-4" placeholder="Cost"><button onclick="saveReward()" class="w-full bg-yellow-500 text-white py-3 rounded-xl font-bold">Add</button></div></div>
+    <div id="mealModal" class="modal" role="dialog" aria-modal="true" aria-label="meal"><div class="modal-box"><h3 class="font-bold text-xl mb-4">Plan Meal</h3><input id="mlDesc" class="w-full border p-3 rounded-xl mb-4" placeholder="Description"><select id="mlType" class="w-full border p-3 rounded-xl mb-6"><option>Dinner</option><option>Lunch</option><option>Breakfast</option></select><div class="flex justify-end gap-3"><button onclick="closeModal('mealModal')" class="text-gray-500 font-bold">Cancel</button><button onclick="saveMeal()" class="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold">Save</button></div></div></div>
+    <div id="wellnessModal" class="modal" role="dialog" aria-modal="true" aria-label="wellness"><div class="modal-box"><h3 class="font-bold text-xl mb-4">New Habit</h3><input id="wlName" class="w-full border p-3 rounded-xl mb-4" placeholder="Name (e.g. Vitamin C)"><select id="wlProf" class="w-full border p-3 rounded-xl mb-6"></select><div class="flex justify-end gap-3"><button onclick="closeModal('wellnessModal')" class="text-gray-500 font-bold">Cancel</button><button onclick="saveWell()" class="bg-rose-500 text-white px-6 py-2 rounded-xl font-bold">Save</button></div></div></div>
+    <div id="inputModal" class="modal" role="dialog" aria-modal="true" aria-label="input"><div class="modal-box"><h3 class="font-bold text-xl mb-4" id="inpTitle">Input</h3><input id="inpVal" class="w-full border p-3 rounded-xl mb-4"><div class="flex justify-end gap-3"><button onclick="closeModal('inputModal')" class="text-gray-500 font-bold">Cancel</button><button onclick="submitInput()" class="bg-green-500 text-white px-6 py-2 rounded-xl font-bold">Save</button></div></div></div>
+    <div id="rewardModal" class="modal" role="dialog" aria-modal="true" aria-label="reward"><div class="modal-box"><div class="flex justify-between mb-4"><h3 class="font-bold text-xl">Add Reward</h3><button onclick="closeModal('rewardModal')" class="text-2xl text-gray-400">×</button></div><input id="rwName" class="w-full border p-2 rounded-xl mb-2" placeholder="Name"><input id="rwCost" type="number" class="w-full border p-2 rounded-xl mb-4" placeholder="Cost"><button onclick="saveReward()" class="w-full bg-yellow-500 text-white py-3 rounded-xl font-bold">Add</button></div></div>
 
     <script>
         const DB='lumina_verified_final_v27';
@@ -448,8 +448,8 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
         function setView(id){
             document.querySelectorAll('.view-container').forEach(e=>e.classList.remove('active'));
             document.getElementById('view-'+id).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
-            document.querySelectorAll(`.nav-item[onclick="setView('${id}')"]`).forEach(e=>e.classList.add('active'));
+            document.querySelectorAll('.nav-item').forEach(e=>{e.classList.remove('active');e.removeAttribute('aria-current');});
+            document.querySelectorAll(`.nav-item[onclick="setView('${id}')"]`).forEach(e=>{e.classList.add('active');e.setAttribute('aria-current','page');});
         }
         function openModal(id){const el=document.getElementById(id);el.classList.add('open');el.querySelector('input,select,button')?.focus();}
         function closeModal(id){document.getElementById(id).classList.remove('open');}
@@ -593,7 +593,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
         function saveEvent(){ const t=document.getElementById('evTitle').value; if(t){ data.events.push({id:Date.now(),title:t,date:document.getElementById('evDate').value,time:document.getElementById('evTime').value,emoji:document.getElementById('evEmoji').value,pid:document.getElementById('evProf').value}); save(); closeModal('eventModal'); } }
         function delEv(id){if(confirm("Delete event?")){data.events=data.events.filter(x=>x.id!=id);save();}}
 
-        async function searchRecipes(){const q=document.getElementById('recipeSearch').value;const r=await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${q}`).then(res=>res.json());document.getElementById('recipeResults').innerHTML=r.meals?r.meals.slice(0,5).map(m=>`<div class="flex items-center gap-3 p-2 border rounded hover:bg-gray-50 cursor-pointer" onclick="addMealRec('${m.strMeal}')"><img src="${m.strMealThumb}/preview" class="w-10 h-10 rounded"><div class="text-sm font-bold">${m.strMeal}</div></div>`).join(''):'No results.';}
+        async function searchRecipes(){const q=document.getElementById('recipeSearch').value.trim();const r=await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(q)}`).then(res=>res.json());document.getElementById('recipeResults').innerHTML=r.meals?r.meals.slice(0,5).map(m=>`<div class="flex items-center gap-3 p-2 border rounded hover:bg-gray-50 cursor-pointer" onclick="addMealRec('${escapeText(m.strMeal)}')"><img src="${m.strMealThumb}/preview" class="w-10 h-10 rounded"><div class="text-sm font-bold">${escapeText(m.strMeal)}</div></div>`).join(''):'No results.';}
         function addMealRec(n){data.meals.push({id:genId(),desc:n,type:'Dinner'});save();alert("Added");}
         function openMealModal(){document.getElementById('mlDesc').value='';openModal('mealModal');}
         function saveMeal(){const d=document.getElementById('mlDesc').value;if(d){data.meals.push({id:genId(),desc:d,type:document.getElementById('mlType').value});save();closeModal('mealModal');}}
@@ -620,8 +620,9 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
         function saveWell(){const n=document.getElementById('wlName').value;if(n){data.wellness.push({id:Date.now(),name:n,pid:document.getElementById('wlProf').value,history:[]});save();closeModal('wellnessModal');}}
         function togWell(id){const w=data.wellness.find(x=>x.id==id),t=todayLocal();if(!w.history)w.history=[];if(w.history.includes(t))w.history=w.history.filter(x=>x!=t);else w.history.push(t);save();}
         function delWell(id){data.wellness=data.wellness.filter(x=>x.id!=id);save();}
-        function renderBank(){document.getElementById('bankList').innerHTML=data.profiles.map(p=>`<div class="flex justify-between p-3 border rounded-lg"><span class="font-bold">${escapeText(p.name)}</span><div class="flex gap-2"><button onclick="modBank('${p.id}',-1)">-</button><span class="text-yellow-500 font-bold">${p.stars}⭐</span><button onclick="modBank('${p.id}',1)">+</button></div></div>`).join(''); document.getElementById('rewardsList').innerHTML=data.rewards.map(r=>`<div class="flex justify-between p-2 hover:bg-gray-50 cursor-pointer" onclick="redeem('${r.name}',${r.cost})"><span>${r.name}</span><b>${r.cost}</b></div>`).join('');}
+        function renderBank(){document.getElementById('bankList').innerHTML=data.profiles.map(p=>`<div class="flex justify-between p-3 border rounded-lg"><span class="font-bold">${escapeText(p.name)}</span><div class="flex gap-2"><button onclick="modBank('${p.id}',-1)">-</button><span class="text-yellow-500 font-bold">${p.stars}⭐</span><button onclick="modBank('${p.id}',1)">+</button></div></div>`).join(''); document.getElementById('rewardsList').innerHTML=data.rewards.map(r=>`<div class="flex justify-between p-2 hover:bg-gray-50 cursor-pointer" onclick="redeemByIndex(${data.rewards.indexOf(r)})"><span>${escapeText(r.name)}</span><b>${r.cost}</b></div>`).join('');}
         function modBank(pid,d){const p=data.profiles.find(x=>x.id==pid);p.stars+=d;save();}
+        function redeemByIndex(index){const reward=data.rewards[index];if(reward)redeem(reward.name,Number(reward.cost)||0);}
         function redeem(n,c){const p=data.profiles[0];if(p.stars>=c && confirm(`Redeem ${n}?`)){p.stars-=c;save();}else alert("Not enough stars");}
         function saveReward(){const n=document.getElementById('rwName').value, c=document.getElementById('rwCost').value; if(n&&c){data.rewards.push({name:n,cost:parseInt(c)});save();closeModal('rewardModal');}}
 
@@ -650,5 +651,5 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
 
         init();
     </script>
-</body>
+<section class="lumina-info" aria-labelledby="luminaInfoTitle"><h2 id="luminaInfoTitle">About Lumina Family OS</h2><details><summary>What can I organize here?</summary><p>Plan routines, chores, family events, meal ideas, shopping lists, wellness habits and star rewards in one browser-based home dashboard.</p></details><details><summary>Is Lumina free, and where is my data saved?</summary><p>Lumina is free and needs no sign-in. Changes are stored in this browser on this device. They do not automatically sync between devices. Clear browser site data to remove them.</p></details><details><summary>Does Lumina access my location?</summary><p>No automatic location request is needed. Set a city in Settings to look up current weather with Open-Meteo. Recipe searches are sent to TheMealDB.</p></details></section></body>
 </html>
