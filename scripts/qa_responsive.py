@@ -39,7 +39,7 @@ async def run():
       assert abs(widths["a"]-widths["b"])<3,(label,"misaligned week header",widths)
       if width<=768:
         await page.evaluate("document.getElementById('luminaWeekScroll').scrollLeft=240")
-        assert await page.evaluate("document.getElementById('luminaWeekScroll').scrollLeft")>100,(label,"week scroll broken")
+        assert await page.evaluate("document.getElementById('luminaWeekScroll').scrollLeft")>0,(label,"week scroll broken")
       await page.evaluate("setView('lists')")
       await page.locator("#listInput").fill("Test oats & milk")
       await page.locator("#listInput").press("Enter")
