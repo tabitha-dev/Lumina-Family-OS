@@ -39,3 +39,36 @@ body{background:var(--lumina-bg);color:var(--lumina-ink);overflow:hidden}
 .task-card.completed{opacity:1;transform:none}.progress-bg{margin-bottom:14px}
 .card{padding:clamp(16px,2.1vw,27px);border-radius:21px;margin-bottom:18px}.card h3{font-size:19px}
 .modal{padding:12px}.modal-box{max-height:min(88dvh,820px);overflow-y:auto;border-radius:22px;padding:clamp(20px,3vw,32px)}
+
+.lumina-calendar-toolbar{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:13px;padding:14px;border-bottom:1px solid var(--lumina-line);background:#fff}
+.lumina-calendar-tabs{display:flex;gap:3px;border-radius:99px;background:#f0f4f5;padding:4px;white-space:nowrap}
+.lumina-calendar-tabs button{min-height:42px;padding:8px 15px}
+.lumina-calendar-date-nav{display:flex;align-items:center;justify-content:center;gap:12px;min-width:0}
+.lumina-calendar-date-nav h2{text-align:center;min-width:0;font-size:clamp(14px,1.35vw,18px);line-height:1.3}
+.lumina-calendar-date-nav button{min-height:42px;min-width:42px;display:grid;place-items:center;border-radius:11px;background:#f6f9f9}
+.lumina-calendar-toolbar>button{min-height:43px;border-radius:12px;background:#266f7c}
+.cal-wrapper{height:100%;min-height:500px;padding:0;border-radius:22px;overflow:hidden;min-width:0}
+#view-calendar{min-width:0}
+#monthViewContainer{min-height:0;overflow-y:auto}
+#monthHeaders{grid-template-columns:repeat(7,minmax(0,1fr));font-size:12px}
+.month-grid{grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:minmax(78px,1fr);grid-template-rows:none;min-height:480px}
+.month-cell{display:block;min-width:0;min-height:70px;text-align:left;appearance:none;background:#fff;border-right:1px solid #e5eded;border-bottom:1px solid #e5eded;padding:8px;overflow:hidden;white-space:normal;transition:background .2s}
+.month-cell:focus-visible{z-index:3;outline-offset:-3px}.month-cell:hover{background:#eef6f4}
+.event-chip{display:block;max-width:100%;font-size:11px;line-height:1.3;margin-top:3px;padding:3px 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#weekViewContainer{min-height:0;min-width:0}.week-scroll{min-width:0;min-height:0;overflow:auto;flex:1;overscroll-behavior-x:contain}
+.lumina-week-track{min-width:820px;width:100%}
+.week-calendar-header,.week-grid{display:grid;grid-template-columns:60px repeat(7,minmax(0,1fr))}
+.week-calendar-header{position:sticky;top:0;z-index:18;background:#fff;border-bottom:1px solid #dee6e6}
+.week-grid{min-height:1030px}.week-grid .day-col{min-width:0}
+.day-header-cell{padding:12px 6px}.day-name,.time-slot{font-size:12px;color:#546f7d}
+.event-block{width:auto;min-height:44px;padding:7px;font-size:12px}
+.lumina-more-panel[hidden]{display:none!important}.lumina-more-panel{display:none}
+.lumina-label{display:block;color:#405b69;font-size:13px;font-weight:800;margin:12px 0 6px}
+.lumina-reward-profile{width:100%;min-height:44px;border:1px solid #cededf;border-radius:12px;padding:9px 11px;background:white;color:#19374b}
+.lumina-backup-section{margin-top:18px;padding:16px;border:1px solid #dce7e6;border-radius:16px;background:#f7faf9}
+.lumina-backup-section h4{font-size:16px;font-weight:800;color:#19374b}
+.lumina-backup-section p{font-size:13px;line-height:1.5;color:#526a78;margin:6px 0 12px}
+.lumina-backup-actions{display:flex;flex-wrap:wrap;gap:10px}
+.lumina-backup-actions button,.lumina-import-label{display:inline-flex;align-items:center;justify-content:center;padding:9px 12px;min-height:44px;background:#fff;color:#1f6573;border:1px solid #aacdce;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer}
+.lumina-import-label input{position:absolute;width:1px;height:1px;opacity:.001;clip-path:inset(50%)}.lumina-import-label:focus-within{outline:3px solid #137187;outline-offset:3px}
+.lumina-info{padding:24px 0;max-width:none}
