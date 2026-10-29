@@ -1,148 +1,43 @@
-# 🏠 Lumina Family OS
+# Lumina Family OS
 
-A beautiful modern browser based family dashboard that centralizes routines chores meals events wellness and rewards into one joyful and productive space.
+A free, mobile-friendly family planning dashboard built with HTML, CSS and vanilla JavaScript. It includes routines, chores, calendars, meals, shopping lists, wellness habits and star-based rewards.
 
-Built for shared home devices including tablets kitchen displays and desktops.  
-Runs entirely on your own device through Local Storage which means no server no login and complete privacy.
+**Live site:** https://tabitha-dev.github.io/Lumina-Family-OS/
 
----
+## What changed in the responsive refresh
 
-## ⭐ Project Badges
+- A more polished, welcoming dashboard with an OpenArt-generated 3D miniature-home hero.
+- Responsive desktop and mobile layouts, touch-friendly controls and horizontal scrolling for the dense week calendar.
+- Improved keyboard focus styles, skip link, dialog semantics, Escape-to-close support, reduced-motion behavior, and mobile zoom.
+- More descriptive SEO metadata, a canonical URL, WebApplication structured data and explanatory FAQ.
+- Removed a browser-exposed RapidAPI weather key. Instead, weather uses free Open-Meteo geocoding and forecast endpoints with a city entered in Settings.
+- Fixed shopping-list input button and Enter behavior; hardened several dynamic HTML values.
+- Kept the original localStorage key `lumina_verified_final_v27` to preserve existing data after upgrading on the same device.
 
-![License MIT](https://img.shields.io/badge/License-MIT-blue.svg)
-![Status Active](https://img.shields.io/badge/Status-Active-brightgreen)
-![Made With HTML](https://img.shields.io/badge/Made_With-HTML-orange)
-![Made With CSS](https://img.shields.io/badge/Made_With-CSS-blue)
-![Made With JavaScript](https://img.shields.io/badge/Made_With-JavaScript-yellow)
+## Limitations and privacy
 
----
+**Important:** localStorage is per browser and per device. Items **do not sync across phones and desktops** and may be lost if the browser storage is cleared. This public demo does not require registration or store family records on a server. Do not enter sensitive personal data into a shared or untrusted browser.
 
-## 📚 Table of Contents
+The optional Weather feature sends the entered city name to Open-Meteo. Recipe searches use TheMealDB. The hero image is served by OpenArt's CDN; other third-party fonts, scripts, and wallpapers may also make external requests. Internet access is required for external services.
 
-1. [Live Demo](#-live-demo)  
-2. [Overview](#-overview)  
-3. [Key Features](#-key-features)  
-4. [Tech Stack](#-tech-stack)  
-5. [Getting Started](#-getting-started)  
-6. [Helpful Tips](#-helpful-tips)  
-7. [Credits](#-credits)
+The former publicly embedded RapidAPI key has been removed, but **the key owner should revoke/rotate it in their RapidAPI dashboard**, because removing it from the latest commit does not erase earlier Git history.
 
----
+Accessibility improvements have been implemented, but this release is not certified as WCAG 2.2 AA compliant. Validate with real screen reader, keyboard, contrast and mobile-device testing before treating it as production-compliant. Static metadata does not guarantee indexing or inclusion in AI answer engines.
 
-## 🌐 Live Demo
+## Local development
 
-**Open Lumina Family OS**  
-https://tabitha-dev.github.io/Lumina-Family-OS/
+Open `index.html` using VS Code Live Server or a static HTTP server such as:
 
----
-
-## 📖 Overview
-
-Lumina Family OS is a full digital home hub that feels like a personal operating system.  
-It keeps your family organized through a unified daily view that brings together calendars routines chores meals wellness sleep mode shopping lists and a family reward bank.
-
-All data is stored directly on your device using Local Storage which keeps everything private and persistent.
-
----
-
-## ✨ Key Features
-
-### 📅 Calendar and Scheduling
-Month view and Week view  
-Color coded events per family member  
-Smart event blocks with clean time mapping  
-Quick Add menu for rapid event entry
-
-### ✅ Daily Routines and Chores
-Auto resetting daily routines such as Brush Teeth and Read  
-Confetti animation and star rewards  
-Progress bars for each person  
-Separate section for household chores
-
-### 🥗 Meals and Groceries
-Meal planning for Breakfast Lunch and Dinner  
-Recipe search powered by TheMealDB  
-One click ingredient transfer to the shopping list
-
-### 🌙 Sleep Mode
-Full screen ambient display  
-Live time and date  
-Sunrise Sunset and Moon Phase  
-Rotating nature wallpapers or your uploaded background
-
-### 📦 Lists and Pantry
-Shopping checklists  
-Pantry inventory  
-Quick Add for items from anywhere
-
-### 💰 Family Bank and Rewards
-Star based reward system  
-Redeemable rewards like Ice Cream or Movie Night  
-Per profile star tracking
-
-### 🧘 Wellness Tracker
-Daily wellness habits  
-Per person logs saved every day
-
-### ⚙️ Custom Settings
-Add rename or color code family members  
-Set your city for weather and astronomy  
-Toggle holiday display  
-Upload sleep mode backgrounds  
-Factory Reset option
-
----
-
-## 🛠️ Tech Stack
-
-HTML  
-CSS with Tailwind through CDN  
-Vanilla JavaScript  
-Font Awesome Icons  
-Canvas Confetti  
-
-APIs  
-Weather from WeatherAPI through RapidAPI  
-Recipes from TheMealDB  
-Holidays from API Ninjas through RapidAPI
-
-Source reference: :contentReference[oaicite:0]{index=0}
-
----
-
-## 🚀 Getting Started
-
-### Run Locally
-
-Clone the repository
-
-```
-git clone https://github.com/tabitha-dev/Lumina-Family-OS.git
+```bash
+python -m http.server 8000
 ```
 
-Open index.html in any modern browser
+Visit http://localhost:8000.
 
-### Host on GitHub Pages
+## Pages
 
-Open repository settings  
-Select Pages  
-Choose main branch  
-Site appears at
+GitHub Pages builds from the repository's `main` branch and root folder. No paid hosting, build pipeline or backend is needed.
 
-https://tabitha-dev.github.io/Lumina-Family-OS/
+## Design provenance
 
----
-
-## 📸 Helpful Tips
-
-Add family profiles in Config  
-Use the add button in the header for quick actions  
-Use Factory Reset for a clean start  
-Upload custom backgrounds for Sleep Mode
-
----
-
-## ❤️ Credits
-
-Created with care by **Tabitha Khadse**  
-Designed to help families stay organized in a simple beautiful and private way
+The OpenArt hero asset was generated in the `Lumina Family OS — Design Refresh` project using Nano Banana Pro. Dashboard functionality and existing locally saved family entries are not generated by OpenArt.
