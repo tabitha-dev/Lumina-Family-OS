@@ -1,0 +1,41 @@
+name: Lumina responsive browser QA
+on:
+  push:
+    branches:
+      - fix/lumina-layout-desktop-mobile-20261029
+    paths:
+      - 'index.html'
+      - 'lumina-layout.css'
+      - 'lumina-enhancements.js'
+      - 'scripts/qa_responsive.py'
+      - '.github/workflows/lumina-responsive-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Chromium and Playwright
+        run: |
+          python -m pip install 'playwright==1.57.0'
+          python -m playwright install --with-deps chromium
+      - name: Start site and test responsive workflows
+        run: |
+          python -m http.server 8000 >/tmp/lumina-server.log 2>&1 &
+          python scripts/qa_responsive.py
+      - name: Commit QA screenshots to review branch
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add qa/screenshots
+          if ! git diff --cached --quiet; then
+            git commit -m 'Capture Lumina responsive QA evidence'
+            git push origin HEAD:fix/lumina-layout-desktop-mobile-20261029
+          fi
