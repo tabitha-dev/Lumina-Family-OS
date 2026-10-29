@@ -2,8 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lumina Family OS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lumina Family OS | Free Family Calendar & Routines</title>
+<meta name="description" content="Plan family routines, events, chores, meals, shopping lists and rewards in a free mobile-friendly dashboard. No account required; information stays in your browser.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tabitha-dev.github.io/Lumina-Family-OS/">
+<meta name="theme-color" content="#f7f9f7">
+<meta property="og:type" content="website"><meta property="og:title" content="Lumina Family OS | Family Dashboard">
+<meta property="og:description" content="A free browser-based family calendar, chores, meals, routines and rewards dashboard.">
+<meta property="og:url" content="https://tabitha-dev.github.io/Lumina-Family-OS/">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Lumina Family OS","url":"https://tabitha-dev.github.io/Lumina-Family-OS/","description":"Free browser-based family routines, calendar, chores, meals, shopping and rewards.","applicationCategory":"LifestyleApplication","operatingSystem":"Any","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
@@ -186,9 +195,29 @@
             .header-time { display: none; }
         }
         .bottom-nav .nav-item { flex: 1; height: 100%; }
+
+/* Lumina responsive visual refresh: preserves existing storage and workflows */
+:root{--bg-body:#f7f9f7;--text-main:#19344c;--text-muted:#506978;--border:#dfe8e8}
+*:focus-visible{outline:3px solid #137187!important;outline-offset:3px}
+.lumina-skip{position:fixed;top:-100px;left:12px;z-index:9999;background:#19344c;color:white;padding:12px 18px;border-radius:12px}.lumina-skip:focus{top:12px}
+.lumina-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{max-width:none;grid-template-columns:94px minmax(0,1fr)}
+.sidebar{background:#fff}.logo-box{background:linear-gradient(140deg,#2c8390,#19596e)}.nav-item{border:0;background:transparent;font:inherit}.nav-item span{font-size:11px;color:#435968}.nav-item.active{background:#e4f3f1;color:#13586b;box-shadow:none}
+.header-bar{min-height:80px;padding:14px clamp(16px,3vw,44px);gap:12px}.header-title{font-size:clamp(1.3rem,2.3vw,1.85rem);line-height:1.2}.header-weather{font-size:.9rem;color:#16546a;background:#e8f5f6;border-color:#b8dade;min-height:44px}.header-weather.night{color:#fff}
+.view-container{padding:clamp(16px,2.8vw,38px);padding-bottom:100px}
+.lumina-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,1fr);min-height:270px;border:1px solid #e2e8e6;background:#fffbf5;border-radius:28px;overflow:hidden;margin-bottom:26px;box-shadow:0 10px 30px #22425710}
+.lumina-hero-copy{padding:clamp(24px,3.8vw,50px);align-self:center;position:relative;z-index:1}.lumina-eyebrow{font-size:12px;letter-spacing:.15em;font-weight:800;color:#176f7d}.lumina-hero h2{font-size:clamp(1.9rem,3.5vw,3.2rem);line-height:1.08;letter-spacing:-.04em;font-weight:800;color:#19344c;max-width:540px;margin:10px 0 14px}.lumina-hero p{font-size:clamp(15px,1.5vw,18px);line-height:1.55;color:#526978;max-width:450px}.lumina-hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.lumina-hero-actions button{background:#236979;color:white;border-radius:12px;font-weight:800;padding:12px 16px;min-height:44px}.lumina-hero-actions .lumina-secondary{background:white;color:#236979;border:1px solid #accfd1}
+.lumina-hero-art{min-height:240px;background:url('https://cdn.openart.ai/openart-ai/production/2026-10/create-image/HOjo8ynMh9nVC5lV2qAW/image_1793307065208_08a10c51_1793307065584_2915d5ca.png') center/cover no-repeat}
+.lumina-section-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:0 5px 18px}.lumina-section-heading h2{font-size:clamp(23px,2.4vw,30px);font-weight:800}.lumina-section-heading span{font-size:13px;color:#526978}
+.card,.chore-col,.cal-wrapper{border-color:#dee8e7!important;box-shadow:0 8px 26px #24485b0a}.task-card{min-height:44px}.modal-box{max-height:90dvh;overflow-y:auto}.modal{overflow-y:auto}
+@media(max-width:1024px){.app-layout{grid-template-columns:80px minmax(0,1fr)}.cal-wrapper{min-height:550px}.month-grid{min-height:430px}}
+@media(max-width:768px){.app-layout{display:block}.main-area{width:100%}.header-bar{min-height:70px;padding:12px;gap:6px}.header-bar>div{min-width:0}.header-bar>div:last-child{gap:6px}.header-bar button{min-height:44px}.header-bar .bg-blue-600{padding:9px 12px}.header-weather{font-size:12px;padding:8px 10px;white-space:nowrap}.view-container{padding:14px 14px calc(100px + env(safe-area-inset-bottom))}.lumina-hero{grid-template-columns:1fr;border-radius:22px}.lumina-hero-copy{padding:24px 23px 12px}.lumina-hero-art{min-height:180px;background-position:center 58%}.bottom-nav{height:calc(70px + env(safe-area-inset-bottom));padding:5px 5px env(safe-area-inset-bottom);overflow-x:auto;gap:3px}.bottom-nav .nav-item{min-width:60px;height:58px;flex:1}.bottom-nav .nav-item span{font-size:11px}.chore-board{grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr))}.cal-wrapper{height:auto;min-height:560px;padding:10px}.week-scroll{overflow-x:auto}.week-grid{min-width:750px}.month-grid{min-height:440px}.modal-box{width:min(100%,560px);max-height:88dvh}.lumina-section-heading span{display:none}}
+@media(max-width:420px){.header-title{font-size:1.1rem}.header-weather{max-width:120px;overflow:hidden;text-overflow:ellipsis}.view-container{padding:12px 12px calc(90px + env(safe-area-inset-bottom))}.bottom-nav .nav-item{min-width:53px}.bottom-nav .nav-item span{font-size:10px}.lumina-hero-art{min-height:150px}.month-cell{padding:3px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
     </style>
 </head>
-<body>
+<body><a class="lumina-skip" href="#view-routines">Skip to main content</a><div class="lumina-sr" id="luminaNotice" role="status" aria-live="polite"></div>
 
     <div id="ambient" onclick="toggleSleep(false)">
         <div class="absolute inset-0 bg-black/40"></div>
@@ -210,24 +239,24 @@
     </div>
 
     <div class="app-layout">
-        <nav class="sidebar">
+        <nav class="sidebar" aria-label="Desktop navigation">
             <div class="logo-box"><i class="fa-solid fa-house-chimney"></i></div>
-            <div class="nav-item active" onclick="setView('routines')"><i class="fa-solid fa-clipboard-check text-teal-500"></i><span>Routines</span></div>
-            <div class="nav-item" onclick="setView('calendar')"><i class="fa-solid fa-calendar-days text-blue-500"></i><span>Calendar</span></div>
-            <div class="nav-item" onclick="setView('chores')"><i class="fa-solid fa-broom text-purple-500"></i><span>Chores</span></div>
-            <div class="nav-item" onclick="setView('meals')"><i class="fa-solid fa-utensils text-orange-400"></i><span>Meals</span></div>
-            <div class="nav-item" onclick="setView('lists')"><i class="fa-solid fa-basket-shopping text-green-500"></i><span>Lists</span></div>
-            <div class="nav-item" onclick="setView('bank')"><i class="fa-solid fa-piggy-bank text-yellow-500"></i><span>Bank</span></div>
+            <button type="button" class="nav-item active" onclick="setView('routines')"><i class="fa-solid fa-clipboard-check text-teal-500"></i><span>Routines</span></button>
+            <button type="button" class="nav-item" onclick="setView('calendar')"><i class="fa-solid fa-calendar-days text-blue-500"></i><span>Calendar</span></button>
+            <button type="button" class="nav-item" onclick="setView('chores')"><i class="fa-solid fa-broom text-purple-500"></i><span>Chores</span></button>
+            <button type="button" class="nav-item" onclick="setView('meals')"><i class="fa-solid fa-utensils text-orange-400"></i><span>Meals</span></button>
+            <button type="button" class="nav-item" onclick="setView('lists')"><i class="fa-solid fa-basket-shopping text-green-500"></i><span>Lists</span></button>
+            <button type="button" class="nav-item" onclick="setView('bank')"><i class="fa-solid fa-piggy-bank text-yellow-500"></i><span>Bank</span></button>
             <div style="flex:1"></div>
-            <div class="nav-item" onclick="toggleSleep(true)"><i class="fa-solid fa-moon text-slate-400"></i><span>Sleep</span></div>
-            <div class="nav-item" onclick="openModal('settingsModal')"><i class="fa-solid fa-gear text-slate-400"></i><span>Config</span></div>
+            <button type="button" class="nav-item" onclick="toggleSleep(true)"><i class="fa-solid fa-moon text-slate-400"></i><span>Sleep</span></button>
+            <button type="button" class="nav-item" onclick="openSettings()"><i class="fa-solid fa-gear text-slate-400"></i><span>Config</span></button>
         </nav>
 
         <div class="main-area">
             <header class="header-bar">
                 <div class="flex items-center gap-4"><h1 class="header-title" id="familyNameDisplay">Family Hub</h1><div class="text-2xl font-light text-gray-400 hidden sm:block" id="headerTime">12:00</div></div>
                 <div class="flex items-center gap-4">
-                    <div class="header-weather" id="headerWeatherWidget" onclick="fetchWeather()"><i class="fa-solid fa-cloud-sun"></i> <span id="weatherTemp">--°F</span></div>
+                    <button type="button" class="header-weather" id="headerWeatherWidget" onclick="fetchWeather()" aria-label="Refresh weather"><i class="fa-solid fa-cloud-sun"></i> <span id="weatherTemp">--°F</span></button>
                     <div class="relative">
                         <button onclick="toggleDropdown()" class="bg-blue-600 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-blue-700 transition flex items-center gap-2"><i class="fa-solid fa-plus"></i> Add</button>
                         <div id="addDropdown" class="dropdown-menu">
@@ -243,7 +272,7 @@
 
             <!-- VIEW: ROUTINES -->
             <div id="view-routines" class="view-container active">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6 ml-2">Daily Routines</h2>
+                <section class="lumina-hero" aria-labelledby="luminaHeroHeading"><div class="lumina-hero-copy"><span class="lumina-eyebrow">A CALMER FAMILY DAY</span><h2 id="luminaHeroHeading">Make room for the moments that matter.</h2><p>One welcoming place for plans, routines, and little wins.</p><div class="lumina-hero-actions"><button type="button" onclick="openAddEvent()">Add an event</button><button type="button" class="lumina-secondary" onclick="openQuickAdd()">Quick add</button></div></div><div class="lumina-hero-art" aria-hidden="true"></div></section><div class="lumina-section-heading"><h2>Daily routines</h2><span>Small steps, big wins</span></div>
                 <div id="routineBoard" class="chore-board"></div>
             </div>
             
@@ -293,17 +322,17 @@
             </div>
 
             <div id="view-meals" class="view-container"><div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><div class="card"><h3>Menu <button onclick="openMealModal()" class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full">+ Plan</button></h3><div id="mealList" class="space-y-3 mt-2"></div><button onclick="mealsToShop()" class="w-full mt-4 py-2 border border-dashed border-gray-300 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50">Add Ingredients to List</button></div><div class="card"><h3>Recipe Finder</h3><div class="flex gap-2 mb-4 mt-2"><input id="recipeSearch" class="flex-1 border p-2 rounded-lg text-sm" placeholder="Search (e.g. Pasta)"><button onclick="searchRecipes()" class="bg-blue-600 text-white px-4 rounded-lg text-sm font-bold">Go</button></div><div id="recipeResults" class="space-y-2 max-h-60 overflow-y-auto"></div></div></div></div>
-            <div id="view-lists" class="view-container"><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div class="card"><h3>Shopping <button onclick="clearCheckedList()" class="text-sm text-red-500">Clear</button></h3><div class="flex gap-2 mb-4 mt-2"><input id="listInput" class="flex-1 border p-2 rounded-lg text-sm" placeholder="Add item..." onkeydown="if(event.key==='Enter') addListItem()"><button onclick="addListItem()" class="bg-purple-500 text-white px-4 rounded-lg font-bold">Add</button></div><div id="shoppingListDisplay" class="space-y-2 max-h-96 overflow-y-auto"></div></div><div class="card"><h3>Pantry <button onclick="openInputModal('Item Name', addPantryItem)" class="text-sm text-blue-600">+ Item</button></h3><div id="pantryList" class="space-y-2 mt-2 max-h-96 overflow-y-auto"></div></div></div></div>
+            <div id="view-lists" class="view-container"><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div class="card"><h3>Shopping <button onclick="clearCheckedList()" class="text-sm text-red-500">Clear</button></h3><div class="flex gap-2 mb-4 mt-2"><input id="listInput" class="flex-1 border p-2 rounded-lg text-sm" placeholder="Add item..." onkeydown="if(event.key==='Enter') addListFromInput()"><button onclick="addListFromInput()" class="bg-purple-500 text-white px-4 rounded-lg font-bold">Add</button></div><div id="shoppingListDisplay" class="space-y-2 max-h-96 overflow-y-auto"></div></div><div class="card"><h3>Pantry <button onclick="openInputModal('Item Name', addPantryItem)" class="text-sm text-blue-600">+ Item</button></h3><div id="pantryList" class="space-y-2 mt-2 max-h-96 overflow-y-auto"></div></div></div></div>
             <div id="view-wellness" class="view-container"><div class="card h-full"><h3>Wellness <button onclick="openWellnessModal()" class="text-sm text-rose-500">+ Habit</button></h3><div id="wellnessList" class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div></div></div>
             <div id="view-bank" class="view-container"><div class="grid grid-cols-1 md:grid-cols-2 gap-8"><div class="card"><h3>Balances</h3><div id="bankList" class="space-y-4 mt-2"></div></div><div class="card"><h3>Rewards <button onclick="openModal('rewardModal')" class="text-xs text-blue-500 ml-2">+ New</button></h3><div id="rewardsList" class="space-y-2 mt-2"></div></div></div></div>
         </div>
 
-        <nav class="bottom-nav">
-            <div class="nav-item active" onclick="setView('routines')"><i class="fa-solid fa-clipboard-check"></i><span>Routines</span></div>
-            <div class="nav-item" onclick="setView('calendar')"><i class="fa-solid fa-calendar-days"></i><span>Cal</span></div>
-            <div class="nav-item" onclick="setView('chores')"><i class="fa-solid fa-broom"></i><span>Chores</span></div>
-            <div class="nav-item" onclick="setView('meals')"><i class="fa-solid fa-utensils"></i><span>Meals</span></div>
-            <div class="nav-item" onclick="setView('lists')"><i class="fa-solid fa-basket-shopping"></i><span>Lists</span></div>
+        <nav class="bottom-nav" aria-label="Mobile navigation">
+            <button type="button" class="nav-item active" onclick="setView('routines')"><i class="fa-solid fa-clipboard-check"></i><span>Routines</span></button>
+            <button type="button" class="nav-item" onclick="setView('calendar')"><i class="fa-solid fa-calendar-days"></i><span>Cal</span></button>
+            <button type="button" class="nav-item" onclick="setView('chores')"><i class="fa-solid fa-broom"></i><span>Chores</span></button>
+            <button type="button" class="nav-item" onclick="setView('meals')"><i class="fa-solid fa-utensils"></i><span>Meals</span></button>
+            <button type="button" class="nav-item" onclick="setView('lists')"><i class="fa-solid fa-basket-shopping"></i><span>Lists</span></button>
         </nav>
     </div>
 
