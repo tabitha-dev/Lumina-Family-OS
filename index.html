@@ -407,6 +407,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
     <div id="inputModal" class="modal" role="dialog" aria-modal="true" aria-label="input"><div class="modal-box"><h3 class="font-bold text-xl mb-4" id="inpTitle">Input</h3><input id="inpVal" class="w-full border p-3 rounded-xl mb-4"><div class="flex justify-end gap-3"><button onclick="closeModal('inputModal')" class="text-gray-500 font-bold">Cancel</button><button onclick="submitInput()" class="bg-green-500 text-white px-6 py-2 rounded-xl font-bold">Save</button></div></div></div>
     <div id="rewardModal" class="modal" role="dialog" aria-modal="true" aria-label="reward"><div class="modal-box"><div class="flex justify-between mb-4"><h3 class="font-bold text-xl">Add Reward</h3><button onclick="closeModal('rewardModal')" class="text-2xl text-gray-400">×</button></div><input id="rwName" class="w-full border p-2 rounded-xl mb-2" placeholder="Name"><input id="rwCost" type="number" class="w-full border p-2 rounded-xl mb-4" placeholder="Cost"><button onclick="saveReward()" class="w-full bg-yellow-500 text-white py-3 rounded-xl font-bold">Add</button></div></div>
 
+    <script src="./lumina-enhancements.js"></script>
     <script>
         const DB='lumina_verified_final_v27';
         const escapeText = value => String(value??'').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
