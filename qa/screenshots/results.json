@@ -1,0 +1,42 @@
+[
+  {
+    "viewport": "compact",
+    "width": 320,
+    "layout": "pass",
+    "calendar": "pass",
+    "persistence": "pass",
+    "pageErrors": []
+  },
+  {
+    "viewport": "mobile",
+    "width": 390,
+    "layout": "pass",
+    "calendar": "pass",
+    "persistence": "pass",
+    "pageErrors": []
+  },
+  {
+    "viewport": "tablet",
+    "width": 768,
+    "layout": "pass",
+    "calendar": "pass",
+    "persistence": "pass",
+    "pageErrors": []
+  },
+  {
+    "viewport": "laptop",
+    "width": 1024,
+    "layout": "pass",
+    "calendar": "pass",
+    "persistence": "pass",
+    "pageErrors": []
+  },
+  {
+    "viewport": "desktop",
+    "width": 1440,
+    "layout": "pass",
+    "calendar": "pass",
+    "persistence": "pass",
+    "pageErrors": []
+  }
+]
