@@ -399,6 +399,9 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
 
     <script>
         const DB='lumina_verified_final_v27';
+        const escapeText = value => String(value??'').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+        const todayLocal=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
+        document.addEventListener('keydown',e=>{if(e.key==='Escape'){const modal=document.querySelector('.modal.open');if(modal)closeModal(modal.id);document.getElementById('addDropdown')?.classList.remove('open');}});
         let data={familyName:'Family Hub',profiles:[{id:'p1',name:'Parent',color:'#5eb5b3',stars:0},{id:'p2',name:'Child',color:'#ffadad',stars:0}],tasks:[],events:[],meals:[],list:[],pantry:[],wellness:[],rewards:[{name:"Ice Cream",cost:10},{name:"Movie",cost:50}],holidays:{},settings:{holidays:true,location:'',sleepBg:''},lastReset:''};
         let state={viewDate:new Date(),selDate:new Date(),ambient:false, calMode:'week', inputCb:null, sleepTimer:null};
         const HOLIDAYS={'01-01':"New Year",'07-04':"July 4th",'10-31':"Halloween",'12-25':"Christmas"};
@@ -428,15 +431,15 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
             });
             save();
 
-            const t=new Date().toISOString().split('T')[0];
+            const t=todayLocal();
             if(data.lastReset!==t){
                 data.tasks.forEach(x=>{if(x.type==='routine')x.done=false});
                 data.wellness.forEach(w=>{if(!w.history)w.history=[]});
                 data.lastReset=t;save();
             }
-            renderAll(); setInterval(renderTime,60000); renderTime(); fetchWeather(); fetchAstronomy();
+            renderAll(); setInterval(renderTime,60000); renderTime(); fetchWeather();
         }
-        function save(){localStorage.setItem(DB,JSON.stringify(data));renderAll();}
+        function save(){try{localStorage.setItem(DB,JSON.stringify(data));}catch(e){document.getElementById('luminaNotice').textContent='Local storage unavailable. Your latest changes might not be saved.';}renderAll();}
         function renderAll(){
             document.getElementById('familyNameDisplay').innerText=data.familyName;
             if(state.calMode==='month') renderCal(); else renderWeekCal();
@@ -448,7 +451,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
             document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
             document.querySelectorAll(`.nav-item[onclick="setView('${id}')"]`).forEach(e=>e.classList.add('active'));
         }
-        function openModal(id){document.getElementById(id).classList.add('open');}
+        function openModal(id){const el=document.getElementById(id);el.classList.add('open');el.querySelector('input,select,button')?.focus();}
         function closeModal(id){document.getElementById(id).classList.remove('open');}
         function toggleSleep(on){
             state.ambient=on; const el=document.getElementById('ambient');
@@ -481,53 +484,34 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
             }
         }
 
+        // Public Open-Meteo forecast endpoint; never publish API secrets in a client-only application.
         async function fetchWeather(){
-            const apiKey = '71e3466119mshfcff9f6775e9a01p16c9ecjsn646561b6676e';
-            const widget = document.getElementById('headerWeatherWidget');
-            const updateUI = (tempF, isDay) => { 
-                document.getElementById('weatherTemp').innerText = tempF + "°F"; 
-                document.getElementById('ambWeather').innerText = tempF + "°F"; 
-                
-                let iconClass = 'fa-cloud-sun';
-                if(isDay === 0) iconClass = 'fa-moon';
-                else if(tempF < 50) iconClass = 'fa-cloud-rain';
-                
-                widget.innerHTML = `<i class="fa-solid ${iconClass} text-xl"></i> <span id="weatherTemp">${tempF}°F</span>`;
-                widget.classList.remove('night','sunny','rain');
-                if(isDay === 0) widget.classList.add('night');
-                else if(tempF > 75) widget.classList.add('sunny');
-                else widget.classList.add('rain');
-            };
-            const doFetch = async (q) => {
-                try {
-                    const res = await fetch(`https://weatherapi-com.p.rapidapi.com/current.json?q=${q}`, { method: 'GET', headers: {'x-rapidapi-key': apiKey, 'x-rapidapi-host': 'weatherapi-com.p.rapidapi.com'} });
-                    const json = await res.json();
-                    if(json.current) updateUI(Math.round(json.current.temp_f), json.current.is_day);
-                    if(json.location && json.location.tz_id) { data.settings.timeZone = json.location.tz_id; save(); renderTime(); }
-                } catch(e) { console.log("Err",e); }
-            };
-            if(data.settings.location) { doFetch(data.settings.location); fetchAstronomy(data.settings.location); }
-            else if(navigator.geolocation) {
-                 navigator.geolocation.getCurrentPosition(p => {
-                     const q = `${p.coords.latitude},${p.coords.longitude}`;
-                     doFetch(q); fetchAstronomy(q);
-                 }, () => { doFetch('auto:ip'); fetchAstronomy('London'); });
-            } else { doFetch('auto:ip'); fetchAstronomy('London'); }
+          const widget=document.getElementById('headerWeatherWidget');
+          const city=(data.settings.location||'').trim();
+          if(!city){widget.textContent='Set weather city';document.getElementById('ambWeather').textContent='Add city in Settings';return;}
+          widget.textContent='Loading weather…';
+          try {
+            const geocode=await fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(city)+'&count=1&language=en&format=json');
+            if(!geocode.ok)throw Error('Location lookup unavailable');
+            const place=(await geocode.json()).results?.[0];if(!place)throw Error('Location not found');
+            const url='https://api.open-meteo.com/v1/forecast?latitude='+encodeURIComponent(place.latitude)+'&longitude='+encodeURIComponent(place.longitude)+'&current=temperature_2m,is_day,weather_code&daily=sunrise,sunset&temperature_unit=fahrenheit&forecast_days=1&timezone=auto';
+            const response=await fetch(url);if(!response.ok)throw Error('Weather unavailable');
+            const payload=await response.json(),current=payload.current;if(!current||!Number.isFinite(current.temperature_2m))throw Error('No current weather');
+            const t=Math.round(current.temperature_2m);
+            const names={0:'Clear',1:'Mostly clear',2:'Partly cloudy',3:'Cloudy',45:'Fog',48:'Fog',51:'Drizzle',53:'Drizzle',55:'Drizzle',56:'Freezing drizzle',57:'Freezing drizzle',61:'Rain',63:'Rain',65:'Heavy rain',66:'Freezing rain',67:'Freezing rain',71:'Snow',73:'Snow',75:'Heavy snow',77:'Snow grains',80:'Rain showers',81:'Rain showers',82:'Heavy showers',85:'Snow showers',86:'Snow showers',95:'Thunderstorms',96:'Storm and hail',99:'Storm and hail'};
+            const condition=names[current.weather_code]||'Current weather';
+            widget.textContent=t+'°F · '+condition;
+            widget.setAttribute('aria-label',place.name+': '+t+' degrees Fahrenheit, '+condition+'. Refresh weather');
+            widget.classList.toggle('night',current.is_day===0);
+            document.getElementById('ambWeather').textContent=t+'°F · '+condition;
+            document.getElementById('astroSunrise').textContent=payload.daily?.sunrise?.[0]?.slice(11)||'—';
+            document.getElementById('astroSunset').textContent=payload.daily?.sunset?.[0]?.slice(11)||'—';
+            document.getElementById('astroMoon').textContent='Not available';
+            if(payload.timezone){data.settings.timeZone=payload.timezone;try{localStorage.setItem(DB,JSON.stringify(data))}catch(e){}renderTime();}
+          }catch(e){widget.textContent='Weather unavailable';document.getElementById('ambWeather').textContent='Weather unavailable';}
         }
+        async function fetchAstronomy(){return fetchWeather();}
         
-        async function fetchAstronomy(q){
-             const apiKey = '71e3466119mshfcff9f6775e9a01p16c9ecjsn646561b6676e';
-             try {
-                 const res = await fetch(`https://weatherapi-com.p.rapidapi.com/astronomy.json?q=${q}`, { method: 'GET', headers: {'x-rapidapi-key': apiKey, 'x-rapidapi-host': 'weatherapi-com.p.rapidapi.com'} });
-                 const json = await res.json();
-                 if(json.astronomy && json.astronomy.astro) {
-                     document.getElementById('astroSunrise').innerText = json.astronomy.astro.sunrise;
-                     document.getElementById('astroSunset').innerText = json.astronomy.astro.sunset;
-                     document.getElementById('astroMoon').innerText = json.astronomy.astro.moon_phase;
-                 }
-             } catch(e){console.log("Astro Err", e);}
-        }
-
         function setCalMode(m) {
             state.calMode = m;
             document.getElementById('monthViewContainer').style.display = m==='month' ? 'flex' : 'none';
@@ -548,10 +532,10 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
             for(let i=0;i<f;i++)g.innerHTML+=`<div class="month-cell bg-gray-50"></div>`;
             for(let i=1;i<=d;i++){
                 const iso=new Date(y,m,i).toISOString().split('T')[0];
-                const isTod=new Date().toISOString().split('T')[0]===iso;
+                const isTod=todayLocal()===iso;
                 const hol=data.settings.holidays?HOLIDAYS[iso.substring(5)]:null;
                 const evs=data.events.filter(e=>e.date===iso);
-                const chips=evs.map(e=>{const p=data.profiles.find(x=>x.id===e.pid)||{color:'#ccc'};return `<div class="event-chip" style="background:${p.color}">${e.emoji||''} ${e.title}</div>`}).join('');
+                const chips=evs.map(e=>{const p=data.profiles.find(x=>x.id===e.pid)||{color:'#ccc'};return `<div class="event-chip" style="background:${p.color}">${e.emoji||''} ${escapeText(e.title)}</div>`}).join('');
                 g.innerHTML+=`<div class="month-cell ${isTod?'today':''}" onclick="openAddEvent('${iso}')"><span class="text-sm font-bold ${hol?'text-red-500':''}">${i}</span>${hol?`<div class="text-[10px] text-red-500 font-bold leading-none">${hol}</div>`:''}${chips}</div>`;
             }
         }
@@ -564,7 +548,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
             
             document.getElementById('weekHeader').innerHTML = `<div class="border-r bg-gray-50"></div>` + days.map((d,i) => {
                  const iso = d.toISOString().split('T')[0];
-                 const isToday = new Date().toISOString().split('T')[0] === iso;
+                 const isToday = todayLocal() === iso;
                  return `<div class="day-header-cell ${isToday?'today':''}"><div class="day-name">${d.toLocaleDateString('en-US',{weekday:'short'})}</div><div class="day-num">${d.getDate()}</div></div>`;
             }).join('');
 
@@ -577,7 +561,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
                     if(h >= 8 && h <= 20) {
                         const top = (h - 8) * 80;
                         const p = data.profiles.find(x=>x.id===e.pid)||{color:'#ccc'};
-                        colEl.innerHTML += `<div class="event-block" onclick="delEv('${e.id}')" style="top:${top}px;border-left-color:${p.color};background:${p.color}20"><div class="event-time-lbl">${e.time}</div><div class="event-title-lbl">${e.emoji||''} ${e.title}</div></div>`;
+                        colEl.innerHTML += `<div class="event-block" onclick="delEv('${e.id}')" style="top:${top}px;border-left-color:${p.color};background:${p.color}20"><div class="event-time-lbl">${e.time}</div><div class="event-title-lbl">${e.emoji||''} ${escapeText(e.title)}</div></div>`;
                     }
                 });
             });
@@ -595,17 +579,17 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
             document.getElementById(elId).innerHTML=data.profiles.map(p=>{
                 const ts=data.tasks.filter(t=>t.pid===p.id && t.type===type);
                 const pct=ts.length?Math.round((ts.filter(t=>t.done).length/ts.length)*100):0;
-                return `<div class="chore-col" style="border-top-color:${p.color}"><div class="person-header"><span class="person-name" style="color:${p.color}">${p.name}</span><span class="star-badge">🌟 ${p.stars}</span></div><div class="progress-bg"><div class="progress-fill" style="width:${pct}%;background:${p.color}"></div></div><div class="flex-1 overflow-y-auto space-y-2">${ts.map(t=>`<div class="task-card ${t.done?'completed':''}" onclick="togTask('${t.id}')"><span class="task-emoji">${t.emoji||'📝'}</span><span class="task-text">${t.desc}</span><div class="task-check"><i class="fa-solid fa-check"></i></div></div>`).join('')}</div><button onclick="openTaskModal('${p.id}','${type}')" class="w-full mt-4 py-3 border-2 border-dashed border-blue-200 rounded-xl text-blue-400 font-bold hover:bg-blue-50">+ ${type==='routine'?'Routine':'Chore'}</button></div>`;
+                return `<div class="chore-col" style="border-top-color:${p.color}"><div class="person-header"><span class="person-name" style="color:${p.color}">${escapeText(p.name)}</span><span class="star-badge">🌟 ${p.stars}</span></div><div class="progress-bg"><div class="progress-fill" style="width:${pct}%;background:${p.color}"></div></div><div class="flex-1 overflow-y-auto space-y-2">${ts.map(t=>`<div class="task-card ${t.done?'completed':''}" onclick="togTask('${t.id}')"><span class="task-emoji">${t.emoji||'📝'}</span><span class="task-text">${escapeText(t.desc)}</span><div class="task-check"><i class="fa-solid fa-check"></i></div></div>`).join('')}</div><button onclick="openTaskModal('${p.id}','${type}')" class="w-full mt-4 py-3 border-2 border-dashed border-blue-200 rounded-xl text-blue-400 font-bold hover:bg-blue-50">+ ${type==='routine'?'Routine':'Chore'}</button></div>`;
             }).join('');
         }
         function renderRoutines(){renderBoard('routineBoard','routine');}
         function renderChores(){renderBoard('choreBoard','chore');}
-        function openTaskModal(pid,type){document.getElementById('tkDesc').value='';document.getElementById('tkProf').innerHTML=data.profiles.map(p=>`<option value="${p.id}" ${p.id===pid?'selected':''}>${p.name}</option>`).join('');state.addTaskType=type;openModal('taskModal');}
+        function openTaskModal(pid,type){document.getElementById('tkDesc').value='';document.getElementById('tkProf').innerHTML=data.profiles.map(p=>`<option value="${p.id}" ${p.id===pid?'selected':''}>${escapeText(p.name)}</option>`).join('');state.addTaskType=type;openModal('taskModal');}
         function saveTask(){const d=document.getElementById('tkDesc').value, p=document.getElementById('tkProf').value, e=document.getElementById('tkEmoji')?document.getElementById('tkEmoji').value:'📝'; if(d){data.tasks.push({id:genId(),desc:d,emoji:e,pid:p,type:state.addTaskType,done:false,stars:5});save();closeModal('taskModal');}}
-        function togTask(id){const t=data.tasks.find(x=>x.id==id);t.done=!t.done;if(t.done){confetti({particleCount:50,spread:60,origin:{y:0.6}});data.profiles.find(x=>x.id==t.pid).stars+=5;}save();}
+        function togTask(id){const t=data.tasks.find(x=>x.id==id);if(!t)return;t.done=!t.done;if(t.done){if(typeof confetti==='function'&&!matchMedia('(prefers-reduced-motion: reduce)').matches)confetti({particleCount:50,spread:60,origin:{y:0.6}});const person=data.profiles.find(x=>x.id==t.pid);if(person)person.stars+=5;}save();}
         function applyPreset(){const v=document.getElementById('tkPreset').value; if(v){const[e, ...rest]=v.split(' ');document.getElementById('tkEmoji').value=e;document.getElementById('tkDesc').value=rest.join(' ');}}
         
-        function openAddEvent(date){document.getElementById('evDate').value=date||new Date().toISOString().split('T')[0]; document.getElementById('evProf').innerHTML=data.profiles.map(p=>`<option value="${p.id}">${p.name}</option>`).join(''); openModal('eventModal'); }
+        function openAddEvent(date){document.getElementById('evDate').value=date||todayLocal(); document.getElementById('evProf').innerHTML=data.profiles.map(p=>`<option value="${p.id}">${escapeText(p.name)}</option>`).join(''); openModal('eventModal'); }
         function saveEvent(){ const t=document.getElementById('evTitle').value; if(t){ data.events.push({id:Date.now(),title:t,date:document.getElementById('evDate').value,time:document.getElementById('evTime').value,emoji:document.getElementById('evEmoji').value,pid:document.getElementById('evProf').value}); save(); closeModal('eventModal'); } }
         function delEv(id){if(confirm("Delete event?")){data.events=data.events.filter(x=>x.id!=id);save();}}
 
@@ -613,29 +597,30 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
         function addMealRec(n){data.meals.push({id:genId(),desc:n,type:'Dinner'});save();alert("Added");}
         function openMealModal(){document.getElementById('mlDesc').value='';openModal('mealModal');}
         function saveMeal(){const d=document.getElementById('mlDesc').value;if(d){data.meals.push({id:genId(),desc:d,type:document.getElementById('mlType').value});save();closeModal('mealModal');}}
-        function renderMeals(){document.getElementById('mealList').innerHTML=data.meals.map(m=>`<div class="p-3 bg-blue-50 rounded-lg flex justify-between text-sm"><div><b>${m.type}</b> ${m.desc}</div><button onclick="delMeal('${m.id}')" class="text-red-400">×</button></div>`).join('');}
+        function renderMeals(){document.getElementById('mealList').innerHTML=data.meals.map(m=>`<div class="p-3 bg-blue-50 rounded-lg flex justify-between text-sm"><div><b>${m.type}</b> ${escapeText(m.desc)}</div><button onclick="delMeal('${m.id}')" class="text-red-400">×</button></div>`).join('');}
         function delMeal(id){data.meals=data.meals.filter(x=>x.id!=id);save();}
         function mealsToShop(){
             if(data.meals.length === 0) { alert("No meals planned!"); return; }
-            data.meals.forEach(m=>{data.list.push({id:genId(),text:`Ingr: ${m.desc}`,checked:false});});
+            data.meals.forEach(m=>{data.list.push({id:genId(),text:`Ingr: ${escapeText(m.desc)}`,checked:false});});
             save(); renderList(); alert("Ingredients Added!"); setView('lists');
         }
-        function renderList(){document.getElementById('shoppingListDisplay').innerHTML=data.list.map(i=>`<div class="flex items-center gap-3 p-2 border-b"><input type="checkbox" ${i.checked?'checked':''} onchange="togList('${i.id}')" class="w-5 h-5"><span class="flex-1 ${i.checked?'line-through text-gray-400':''}">${i.text}</span><button onclick="delList('${i.id}')" class="text-gray-300 hover:text-red-500">×</button></div>`).join('');}
-        function addListItem(v){ if(v) {data.list.push({id:genId(),text:v,checked:false}); save();} }
+        function renderList(){document.getElementById('shoppingListDisplay').innerHTML=data.list.map(i=>`<div class="flex items-center gap-3 p-2 border-b"><input type="checkbox" ${i.checked?'checked':''} onchange="togList('${i.id}')" class="w-5 h-5"><span class="flex-1 ${i.checked?'line-through text-gray-400':''}">${escapeText(i.text)}</span><button onclick="delList('${i.id}')" class="text-gray-300 hover:text-red-500">×</button></div>`).join('');}
+        function addListItem(v){ if(v) {data.list.push({id:genId(),text:String(v).trim(),checked:false}); save();} }
+        function addListFromInput(){const field=document.getElementById('listInput');const value=field.value.trim();if(value){addListItem(value);field.value='';field.focus();}}
         function togList(id){const i=data.list.find(x=>x.id==id);i.checked=!i.checked;save();}
         function delList(id){data.list=data.list.filter(x=>x.id!=id);save();}
         function clearCheckedList(){data.list=data.list.filter(x=>!x.checked);save();}
-        function renderPantry(){document.getElementById('pantryList').innerHTML=data.pantry.map(i=>`<div class="flex justify-between p-2 bg-slate-50 rounded mb-1 text-sm"><span class="font-bold">${i.name}</span><button onclick="delPantry('${i.id}')" class="text-red-400">×</button></div>`).join('');}
+        function renderPantry(){document.getElementById('pantryList').innerHTML=data.pantry.map(i=>`<div class="flex justify-between p-2 bg-slate-50 rounded mb-1 text-sm"><span class="font-bold">${escapeText(i.name)}</span><button onclick="delPantry('${i.id}')" class="text-red-400">×</button></div>`).join('');}
         function openInputModal(t, cb){ document.getElementById('inpTitle').innerText=t; state.inputCb=cb; openModal('inputModal'); }
         function submitInput(){ const v=document.getElementById('inpVal').value; if(v && state.inputCb) state.inputCb(v); closeModal('inputModal'); document.getElementById('inpVal').value=''; }
         function addPantryItem(v){if(v)data.pantry.push({id:genId(),name:v,status:'ok'});save();}
         function delPantry(id){data.pantry=data.pantry.filter(x=>x.id!=id);save();}
-        function renderWellness(){const t=new Date().toISOString().split('T')[0];document.getElementById('wellnessList').innerHTML=data.wellness.map(w=>{const done=w.history&&w.history.includes(t); const p=data.profiles.find(x=>x.id==w.pid)||{name:'Family'};return `<div class="flex items-center gap-3 p-3 bg-rose-50 rounded-xl"><input type="checkbox" ${done?'checked':''} onchange="togWell('${w.id}')" class="w-5 h-5 accent-rose-500"><div><div class="font-bold text-rose-900">${w.name}</div><div class="text-xs text-rose-400">${p.name}</div></div><button onclick="delWell('${w.id}')" class="ml-auto text-rose-300">×</button></div>`;}).join('');}
-        function openWellnessModal(){document.getElementById('wlName').value='';document.getElementById('wlProf').innerHTML=data.profiles.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');openModal('wellnessModal');}
+        function renderWellness(){const t=todayLocal();document.getElementById('wellnessList').innerHTML=data.wellness.map(w=>{const done=w.history&&w.history.includes(t); const p=data.profiles.find(x=>x.id==w.pid)||{name:'Family'};return `<div class="flex items-center gap-3 p-3 bg-rose-50 rounded-xl"><input type="checkbox" ${done?'checked':''} onchange="togWell('${w.id}')" class="w-5 h-5 accent-rose-500"><div><div class="font-bold text-rose-900">${escapeText(w.name)}</div><div class="text-xs text-rose-400">${escapeText(p.name)}</div></div><button onclick="delWell('${w.id}')" class="ml-auto text-rose-300">×</button></div>`;}).join('');}
+        function openWellnessModal(){document.getElementById('wlName').value='';document.getElementById('wlProf').innerHTML=data.profiles.map(p=>`<option value="${p.id}">${escapeText(p.name)}</option>`).join('');openModal('wellnessModal');}
         function saveWell(){const n=document.getElementById('wlName').value;if(n){data.wellness.push({id:Date.now(),name:n,pid:document.getElementById('wlProf').value,history:[]});save();closeModal('wellnessModal');}}
-        function togWell(id){const w=data.wellness.find(x=>x.id==id),t=new Date().toISOString().split('T')[0];if(!w.history)w.history=[];if(w.history.includes(t))w.history=w.history.filter(x=>x!=t);else w.history.push(t);save();}
+        function togWell(id){const w=data.wellness.find(x=>x.id==id),t=todayLocal();if(!w.history)w.history=[];if(w.history.includes(t))w.history=w.history.filter(x=>x!=t);else w.history.push(t);save();}
         function delWell(id){data.wellness=data.wellness.filter(x=>x.id!=id);save();}
-        function renderBank(){document.getElementById('bankList').innerHTML=data.profiles.map(p=>`<div class="flex justify-between p-3 border rounded-lg"><span class="font-bold">${p.name}</span><div class="flex gap-2"><button onclick="modBank('${p.id}',-1)">-</button><span class="text-yellow-500 font-bold">${p.stars}⭐</span><button onclick="modBank('${p.id}',1)">+</button></div></div>`).join(''); document.getElementById('rewardsList').innerHTML=data.rewards.map(r=>`<div class="flex justify-between p-2 hover:bg-gray-50 cursor-pointer" onclick="redeem('${r.name}',${r.cost})"><span>${r.name}</span><b>${r.cost}</b></div>`).join('');}
+        function renderBank(){document.getElementById('bankList').innerHTML=data.profiles.map(p=>`<div class="flex justify-between p-3 border rounded-lg"><span class="font-bold">${escapeText(p.name)}</span><div class="flex gap-2"><button onclick="modBank('${p.id}',-1)">-</button><span class="text-yellow-500 font-bold">${p.stars}⭐</span><button onclick="modBank('${p.id}',1)">+</button></div></div>`).join(''); document.getElementById('rewardsList').innerHTML=data.rewards.map(r=>`<div class="flex justify-between p-2 hover:bg-gray-50 cursor-pointer" onclick="redeem('${r.name}',${r.cost})"><span>${r.name}</span><b>${r.cost}</b></div>`).join('');}
         function modBank(pid,d){const p=data.profiles.find(x=>x.id==pid);p.stars+=d;save();}
         function redeem(n,c){const p=data.profiles[0];if(p.stars>=c && confirm(`Redeem ${n}?`)){p.stars-=c;save();}else alert("Not enough stars");}
         function saveReward(){const n=document.getElementById('rwName').value, c=document.getElementById('rwCost').value; if(n&&c){data.rewards.push({name:n,cost:parseInt(c)});save();closeModal('rewardModal');}}
@@ -643,8 +628,8 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
         // --- SETTINGS ---
         function openSettings(){document.getElementById('famNameInput').value=data.familyName;document.getElementById('holTog').checked=data.settings.holidays;document.getElementById('locInput').value=data.settings.location||'';renderSetProfs();openModal('settingsModal');}
         function updateFamName(){data.familyName=document.getElementById('famNameInput').value;save();}
-        function updateLocation(){data.settings.location=document.getElementById('locInput').value; fetchWeather(); save();}
-        function renderSetProfs(){document.getElementById('setProfList').innerHTML=data.profiles.map(p=>`<div class="flex gap-2 mb-2"><input class="border p-1 flex-1" value="${p.name}" onchange="renProf('${p.id}',this.value)"><input type="color" value="${p.color}" onchange="colProf('${p.id}',this.value)" class="w-8 h-8 rounded"><button onclick="delProf('${p.id}')" class="text-red-500 px-2">×</button></div>`).join('');}
+        function updateLocation(){data.settings.location=document.getElementById('locInput').value.trim();save();fetchWeather();}
+        function renderSetProfs(){document.getElementById('setProfList').innerHTML=data.profiles.map(p=>`<div class="flex gap-2 mb-2"><input class="border p-1 flex-1" value="${escapeText(p.name)}" onchange="renProf('${p.id}',this.value)"><input type="color" value="${p.color}" onchange="colProf('${p.id}',this.value)" class="w-8 h-8 rounded"><button onclick="delProf('${p.id}')" class="text-red-500 px-2">×</button></div>`).join('');}
         function renProf(id,v){data.profiles.find(x=>x.id==id).name=v;save();}
         function colProf(id,v){data.profiles.find(x=>x.id==id).color=v;save();renderAll();}
         function addNewProfile(){const newId=genId(); data.profiles.push({id:newId,name:'New',color:'#000',stars:0}); DEFAULT_ROUTINES.forEach(r => data.tasks.push({id:genId(), desc:r.desc, emoji:r.emoji, pid:newId, type:'routine', done:false, stars:5})); save();renderSetProfs();}
