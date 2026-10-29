@@ -18,7 +18,7 @@ A free, mobile-friendly family planning dashboard built with HTML, CSS and vanil
 
 **Important:** localStorage is per browser and per device. Items **do not sync across phones and desktops** and may be lost if the browser storage is cleared. This public demo does not require registration or store family records on a server. Do not enter sensitive personal data into a shared or untrusted browser.
 
-The optional Weather feature sends the entered city name to Open-Meteo. Recipe searches use TheMealDB. The hero image is served by OpenArt's CDN; other third-party fonts, scripts, and wallpapers may also make external requests. Internet access is required for external services.
+The optional Weather feature sends the entered city name to Open-Meteo. Recipe searches use TheMealDB. The OpenArt hero image is optimized and hosted locally on GitHub Pages; other third-party fonts, scripts, and wallpapers may still make external requests. Internet access is required for external services.
 
 The former publicly embedded RapidAPI key has been removed, but **the key owner should revoke/rotate it in their RapidAPI dashboard**, because removing it from the latest commit does not erase earlier Git history.
 
