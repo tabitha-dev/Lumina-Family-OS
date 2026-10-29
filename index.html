@@ -216,6 +216,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 
     .lumina-info{padding:24px clamp(20px,5vw,80px);background:#f7f9f7;color:#19344c;max-width:1200px;margin:0 auto}.lumina-info h2{font-size:22px;font-weight:800;margin-bottom:12px}.lumina-info details{background:white;border:1px solid #dfe8e8;padding:15px 18px;border-radius:14px;margin-bottom:8px}.lumina-info summary{cursor:pointer;font-weight:800}.lumina-info p{margin-top:12px;line-height:1.6;color:#506978} </style>
+    <link href="./lumina-layout.css" rel="stylesheet">
 </head>
 <body><a class="lumina-skip" href="#view-routines">Skip to main content</a><div class="lumina-sr" id="luminaNotice" role="status" aria-live="polite"></div>
 
@@ -244,7 +245,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
             <button type="button" class="nav-item active" onclick="setView('routines')"><i class="fa-solid fa-clipboard-check text-teal-500"></i><span>Routines</span></button>
             <button type="button" class="nav-item" onclick="setView('calendar')"><i class="fa-solid fa-calendar-days text-blue-500"></i><span>Calendar</span></button>
             <button type="button" class="nav-item" onclick="setView('chores')"><i class="fa-solid fa-broom text-purple-500"></i><span>Chores</span></button>
-            <button type="button" class="nav-item" onclick="setView('meals')"><i class="fa-solid fa-utensils text-orange-400"></i><span>Meals</span></button>
+            <button type="button" class="nav-item" onclick="setView('meals')"><i class="fa-solid fa-utensils text-orange-400"></i><span>Meals</span></button><button type="button" class="nav-item" onclick="setView('wellness')"><i class="fa-solid fa-heart-pulse text-rose-500"></i><span>Wellness</span></button>
             <button type="button" class="nav-item" onclick="setView('lists')"><i class="fa-solid fa-basket-shopping text-green-500"></i><span>Lists</span></button>
             <button type="button" class="nav-item" onclick="setView('bank')"><i class="fa-solid fa-piggy-bank text-yellow-500"></i><span>Bank</span></button>
             <div style="flex:1"></div>
@@ -273,7 +274,11 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
             <!-- VIEW: ROUTINES -->
             <div id="view-routines" class="view-container active">
                 <section class="lumina-hero" aria-labelledby="luminaHeroHeading"><div class="lumina-hero-copy"><span class="lumina-eyebrow">A CALMER FAMILY DAY</span><h2 id="luminaHeroHeading">Make room for the moments that matter.</h2><p>One welcoming place for plans, routines, and little wins.</p><div class="lumina-hero-actions"><button type="button" onclick="openAddEvent()">Add an event</button><button type="button" class="lumina-secondary" onclick="openQuickAdd()">Quick add</button></div></div><div class="lumina-hero-art" aria-hidden="true"></div></section><div class="lumina-section-heading"><h2>Daily routines</h2><span>Small steps, big wins</span></div>
-                <div id="routineBoard" class="chore-board"></div><section class="lumina-info" aria-labelledby="luminaInfoTitle"><h2 id="luminaInfoTitle">About Lumina Family OS</h2><details><summary>What can I organize here?</summary><p>Plan routines, chores, family events, meal ideas, shopping lists, wellness habits and star rewards in one browser-based home dashboard.</p></details><details><summary>Is Lumina free, and where is my data saved?</summary><p>Lumina is free and needs no sign-in. Changes are stored in this browser on this device. They do not automatically sync between devices. Clear browser site data to remove them.</p></details><details><summary>Does Lumina access my location?</summary><p>No automatic location request is needed. Set a city in Settings to look up current weather with Open-Meteo. Recipe searches are sent to TheMealDB.</p></details></section>
+                <section class="lumina-today" aria-label="Today at a glance">
+  <div class="lumina-today-item"><span class="lumina-today-symbol" aria-hidden="true">✓</span><div><strong id="luminaRoutinesDone">0 / 0</strong><span>Routines completed</span></div></div>
+  <div class="lumina-today-item"><span class="lumina-today-symbol" aria-hidden="true">▦</span><div><strong id="luminaEventsToday">0</strong><span>Today's events</span></div></div>
+  <div class="lumina-today-item"><span class="lumina-today-symbol" aria-hidden="true">◈</span><div><strong id="luminaShoppingCount">0</strong><span>Shopping items left</span></div></div>
+</section><div id="routineBoard" class="chore-board"></div><section class="lumina-info" aria-labelledby="luminaInfoTitle"><h2 id="luminaInfoTitle">About Lumina Family OS</h2><details><summary>What can I organize here?</summary><p>Plan routines, chores, family events, meal ideas, shopping lists, wellness habits and star rewards in one browser-based home dashboard.</p></details><details><summary>Is Lumina free, and where is my data saved?</summary><p>Lumina is free and needs no sign-in. Changes are stored in this browser on this device. They do not automatically sync between devices. Clear browser site data to remove them.</p></details><details><summary>Does Lumina access my location?</summary><p>No automatic location request is needed. Set a city in Settings to look up current weather with Open-Meteo. Recipe searches are sent to TheMealDB.</p></details></section>
             </div>
             
             <!-- VIEW: CHORES -->
@@ -285,15 +290,15 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
             <!-- VIEW: CALENDAR -->
             <div id="view-calendar" class="view-container" style="padding: 20px;">
                 <div class="cal-wrapper">
-                    <div class="flex justify-between items-center p-4 border-b border-gray-200 bg-white z-20">
-                         <div class="flex gap-1 bg-gray-100 p-1 rounded-full">
+                    <div class="lumina-calendar-toolbar">
+                         <div class="lumina-calendar-tabs">
                              <button onclick="setCalMode('month')" id="btnMonth" class="toggle-btn inactive">Month</button>
                              <button onclick="setCalMode('week')" id="btnWeek" class="toggle-btn active">Week</button>
                          </div>
-                         <div class="flex items-center gap-4">
-                             <button onclick="navCal(-1)"><i class="fa-solid fa-chevron-left text-xl text-gray-400 hover:text-black"></i></button>
+                         <div class="lumina-calendar-date-nav">
+                             <button type="button" aria-label="Previous calendar period" onclick="navCal(-1)"><i class="fa-solid fa-chevron-left text-xl text-gray-400 hover:text-black"></i></button>
                              <h2 id="calRangeDisplay" class="text-xl font-bold text-gray-800">Month</h2>
-                             <button onclick="navCal(1)"><i class="fa-solid fa-chevron-right text-xl text-gray-400 hover:text-black"></i></button>
+                             <button type="button" aria-label="Next calendar period" onclick="navCal(1)"><i class="fa-solid fa-chevron-right text-xl text-gray-400 hover:text-black"></i></button>
                          </div>
                          <button onclick="openAddEvent()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm">+ Event</button>
                     </div>
@@ -304,9 +309,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
                     </div>
 
                     <div id="weekViewContainer" class="flex flex-col flex-1 h-full overflow-hidden">
-                         <div class="grid grid-template-columns-8 border-b bg-white z-10" style="grid-template-columns: 60px repeat(7, 1fr);" id="weekHeader"></div>
-                         <div class="week-scroll">
-                             <div class="week-grid">
+                         <div class="week-scroll" id="luminaWeekScroll" tabindex="0" role="region" aria-label="Scrollable weekly calendar"><div class="lumina-week-track"><div class="week-calendar-header" id="weekHeader"></div><div class="week-grid">
                                  <div class="time-col">
                                      <div class="time-slot">8 AM</div><div class="time-slot">9 AM</div><div class="time-slot">10 AM</div><div class="time-slot">11 AM</div>
                                      <div class="time-slot">12 PM</div><div class="time-slot">1 PM</div><div class="time-slot">2 PM</div><div class="time-slot">3 PM</div>
@@ -315,16 +318,16 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
                                  </div>
                                  <div id="wc0" class="day-col"></div> <div id="wc1" class="day-col"></div> <div id="wc2" class="day-col"></div> <div id="wc3" class="day-col"></div>
                                  <div id="wc4" class="day-col"></div> <div id="wc5" class="day-col"></div> <div id="wc6" class="day-col"></div>
-                             </div>
+                             </div></div>
                          </div>
                     </div>
                 </div>
             </div>
 
-            <div id="view-meals" class="view-container"><div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><div class="card"><h3>Menu <button onclick="openMealModal()" class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full">+ Plan</button></h3><div id="mealList" class="space-y-3 mt-2"></div><button onclick="mealsToShop()" class="w-full mt-4 py-2 border border-dashed border-gray-300 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50">Add Ingredients to List</button></div><div class="card"><h3>Recipe Finder</h3><div class="flex gap-2 mb-4 mt-2"><input id="recipeSearch" class="flex-1 border p-2 rounded-lg text-sm" placeholder="Search (e.g. Pasta)"><button onclick="searchRecipes()" class="bg-blue-600 text-white px-4 rounded-lg text-sm font-bold">Go</button></div><div id="recipeResults" class="space-y-2 max-h-60 overflow-y-auto"></div></div></div></div>
+            <div id="view-meals" class="view-container"><div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><div class="card"><h3>Menu <button onclick="openMealModal()" class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full">+ Plan</button></h3><div id="mealList" class="space-y-3 mt-2"></div><button onclick="mealsToShop()" class="w-full mt-4 py-2 border border-dashed border-gray-300 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50">Add meal reminders to shopping list</button></div><div class="card"><h3>Recipe Finder</h3><div class="flex gap-2 mb-4 mt-2"><input id="recipeSearch" class="flex-1 border p-2 rounded-lg text-sm" placeholder="Search (e.g. Pasta)"><button onclick="searchRecipes()" class="bg-blue-600 text-white px-4 rounded-lg text-sm font-bold">Go</button></div><div id="recipeResults" class="space-y-2 max-h-60 overflow-y-auto"></div></div></div></div>
             <div id="view-lists" class="view-container"><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div class="card"><h3>Shopping <button onclick="clearCheckedList()" class="text-sm text-red-500">Clear</button></h3><div class="flex gap-2 mb-4 mt-2"><input id="listInput" class="flex-1 border p-2 rounded-lg text-sm" placeholder="Add item..." onkeydown="if(event.key==='Enter') addListFromInput()"><button onclick="addListFromInput()" class="bg-purple-500 text-white px-4 rounded-lg font-bold">Add</button></div><div id="shoppingListDisplay" class="space-y-2 max-h-96 overflow-y-auto"></div></div><div class="card"><h3>Pantry <button onclick="openInputModal('Item Name', addPantryItem)" class="text-sm text-blue-600">+ Item</button></h3><div id="pantryList" class="space-y-2 mt-2 max-h-96 overflow-y-auto"></div></div></div></div>
             <div id="view-wellness" class="view-container"><div class="card h-full"><h3>Wellness <button onclick="openWellnessModal()" class="text-sm text-rose-500">+ Habit</button></h3><div id="wellnessList" class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div></div></div>
-            <div id="view-bank" class="view-container"><div class="grid grid-cols-1 md:grid-cols-2 gap-8"><div class="card"><h3>Balances</h3><div id="bankList" class="space-y-4 mt-2"></div></div><div class="card"><h3>Rewards <button onclick="openModal('rewardModal')" class="text-xs text-blue-500 ml-2">+ New</button></h3><div id="rewardsList" class="space-y-2 mt-2"></div></div></div></div>
+            <div id="view-bank" class="view-container"><div class="grid grid-cols-1 md:grid-cols-2 gap-8"><div class="card"><h3>Balances</h3><label for="luminaRedeemProfile" class="lumina-label">Redeem rewards for</label><select id="luminaRedeemProfile" class="lumina-reward-profile" aria-label="Select family member for reward redemption"></select><div id="bankList" class="space-y-4 mt-2"></div></div><div class="card"><h3>Rewards <button onclick="openModal('rewardModal')" class="text-xs text-blue-500 ml-2">+ New</button></h3><div id="rewardsList" class="space-y-2 mt-2"></div></div></div></div>
         </div>
 
         <nav class="bottom-nav" aria-label="Mobile navigation">
@@ -333,7 +336,14 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
             <button type="button" class="nav-item" onclick="setView('chores')"><i class="fa-solid fa-broom"></i><span>Chores</span></button>
             <button type="button" class="nav-item" onclick="setView('meals')"><i class="fa-solid fa-utensils"></i><span>Meals</span></button>
             <button type="button" class="nav-item" onclick="setView('lists')"><i class="fa-solid fa-basket-shopping"></i><span>Lists</span></button>
+            <button type="button" class="nav-item lumina-more-trigger" id="luminaMoreButton" aria-label="More family sections" aria-expanded="false" aria-controls="luminaMoreMenu" onclick="toggleMobileMore()"><i class="fa-solid fa-ellipsis" aria-hidden="true"></i><span>More</span></button>
         </nav>
+        <div class="lumina-more-panel" id="luminaMoreMenu" hidden>
+          <button type="button" onclick="setView('wellness')"><i class="fa-solid fa-heart-pulse" aria-hidden="true"></i> Wellness</button>
+          <button type="button" onclick="setView('bank')"><i class="fa-solid fa-piggy-bank" aria-hidden="true"></i> Rewards &amp; stars</button>
+          <button type="button" onclick="toggleSleep(true);toggleMobileMore(false)"><i class="fa-solid fa-moon" aria-hidden="true"></i> Sleep display</button>
+          <button type="button" onclick="openSettings();toggleMobileMore(false)"><i class="fa-solid fa-gear" aria-hidden="true"></i> Settings</button>
+        </div>
     </div>
 
     <!-- MODALS -->
@@ -341,7 +351,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
     <div id="settingsModal" class="modal" role="dialog" aria-modal="true" aria-label="settings"><div class="modal-box"><h3 class="text-xl font-bold mb-4">Settings</h3><div class="space-y-4"><input id="famNameInput" class="w-full border p-2 rounded-lg" placeholder="Family Name" onchange="updateFamName()"><input id="locInput" class="w-full border p-2 rounded-lg" placeholder="City (for Weather)" onchange="updateLocation()"><div id="setProfList" class="space-y-2 mb-2"></div><button onclick="addNewProfile()" class="text-blue-600 font-bold text-sm">+ Add Person</button><div class="flex justify-between border-t pt-4"><span class="font-bold">Show Holidays</span><input type="checkbox" id="holTog" onchange="toggleHolidays()" class="w-5 h-5 accent-blue-600"></div>
     <!-- Photo Upload -->
     <div class="flex justify-between items-center border-t pt-4"><span class="font-bold text-sm">Sleep Background</span><label class="cursor-pointer text-blue-500 text-sm font-bold hover:underline">Upload <input type="file" class="hidden" accept="image/*" onchange="uploadSleepBg(this)"></label></div>
-    <button onclick="resetApp()" class="w-full text-red-500 border border-red-100 py-2 rounded-lg font-bold mt-2">Factory Reset</button></div><button onclick="closeModal('settingsModal')" class="mt-4 w-full text-gray-400">Close</button></div></div>
+    <div class="lumina-backup-section"><h4>Keep a copy of your family plans</h4><p>Data stays in this browser. A backup makes moving to another device easier.</p><div class="lumina-backup-actions"><button type="button" onclick="downloadFamilyBackup()">Download backup</button><label class="lumina-import-label">Restore backup<input type="file" accept=".json,application/json" onchange="restoreFamilyBackup(event)"></label></div></div><button onclick="resetApp()" class="w-full text-red-500 border border-red-100 py-2 rounded-lg font-bold mt-2">Factory Reset</button></div><button onclick="closeModal('settingsModal')" class="mt-4 w-full text-gray-400">Close</button></div></div>
     
     <!-- Event Modal -->
     <div id="eventModal" class="modal" role="dialog" aria-modal="true" aria-label="event">
@@ -397,13 +407,14 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
     <div id="inputModal" class="modal" role="dialog" aria-modal="true" aria-label="input"><div class="modal-box"><h3 class="font-bold text-xl mb-4" id="inpTitle">Input</h3><input id="inpVal" class="w-full border p-3 rounded-xl mb-4"><div class="flex justify-end gap-3"><button onclick="closeModal('inputModal')" class="text-gray-500 font-bold">Cancel</button><button onclick="submitInput()" class="bg-green-500 text-white px-6 py-2 rounded-xl font-bold">Save</button></div></div></div>
     <div id="rewardModal" class="modal" role="dialog" aria-modal="true" aria-label="reward"><div class="modal-box"><div class="flex justify-between mb-4"><h3 class="font-bold text-xl">Add Reward</h3><button onclick="closeModal('rewardModal')" class="text-2xl text-gray-400">×</button></div><input id="rwName" class="w-full border p-2 rounded-xl mb-2" placeholder="Name"><input id="rwCost" type="number" class="w-full border p-2 rounded-xl mb-4" placeholder="Cost"><button onclick="saveReward()" class="w-full bg-yellow-500 text-white py-3 rounded-xl font-bold">Add</button></div></div>
 
+    <script src="./lumina-enhancements.js"></script>
     <script>
         const DB='lumina_verified_final_v27';
         const escapeText = value => String(value??'').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
         const todayLocal=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
         document.addEventListener('keydown',e=>{if(e.key==='Escape'){const modal=document.querySelector('.modal.open');if(modal)closeModal(modal.id);document.getElementById('addDropdown')?.classList.remove('open');}});
         let data={familyName:'Family Hub',profiles:[{id:'p1',name:'Parent',color:'#5eb5b3',stars:0},{id:'p2',name:'Child',color:'#ffadad',stars:0}],tasks:[],events:[],meals:[],list:[],pantry:[],wellness:[],rewards:[{name:"Ice Cream",cost:10},{name:"Movie",cost:50}],holidays:{},settings:{holidays:true,location:'',sleepBg:''},lastReset:''};
-        let state={viewDate:new Date(),selDate:new Date(),ambient:false, calMode:'week', inputCb:null, sleepTimer:null};
+        let state={viewDate:new Date(),selDate:new Date(),ambient:false, calMode:'month', inputCb:null, sleepTimer:null};
         const HOLIDAYS={'01-01':"New Year",'07-04':"July 4th",'10-31':"Halloween",'12-25':"Christmas"};
         const DEFAULT_ROUTINES = [
             {desc: "Brush Teeth", emoji: "🦷"}, {desc: "Make Bed", emoji: "🛏️"}, 
@@ -437,19 +448,24 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
                 data.wellness.forEach(w=>{if(!w.history)w.history=[]});
                 data.lastReset=t;save();
             }
-            renderAll(); setInterval(renderTime,60000); renderTime(); fetchWeather();
+            renderAll();setCalMode('month'); setInterval(renderTime,60000); renderTime(); fetchWeather();
         }
         function save(){try{localStorage.setItem(DB,JSON.stringify(data));}catch(e){document.getElementById('luminaNotice').textContent='Local storage unavailable. Your latest changes might not be saved.';}renderAll();}
         function renderAll(){
             document.getElementById('familyNameDisplay').innerText=data.familyName;
             if(state.calMode==='month') renderCal(); else renderWeekCal();
-            renderRoutines(); renderChores(); renderMeals(); renderList(); renderPantry(); renderBank(); 
+            renderRoutines(); renderChores(); renderMeals(); renderList(); renderPantry(); renderWellness(); renderBank(); renderLuminaToday();
+            enhanceKeyboardTargets(); 
         }
         function setView(id){
             document.querySelectorAll('.view-container').forEach(e=>e.classList.remove('active'));
-            document.getElementById('view-'+id).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(e=>{e.classList.remove('active');e.removeAttribute('aria-current');});
-            document.querySelectorAll(`.nav-item[onclick="setView('${id}')"]`).forEach(e=>{e.classList.add('active');e.setAttribute('aria-current','page');});
+            const panel=document.getElementById('view-'+id);if(!panel)return;panel.classList.add('active');panel.scrollTop=0;toggleMobileMore(false);
+            document.querySelectorAll('.nav-item').forEach(e=>{
+                const current=e.getAttribute('onclick')===`setView('${id}')` || (['wellness','bank'].includes(id)&&e.id==='luminaMoreButton');
+                e.classList.toggle('active',current);
+                if(current)e.setAttribute('aria-current','page');else e.removeAttribute('aria-current');
+            });
+            if(id==='calendar')setCalMode(state.calMode);
         }
         function openModal(id){const el=document.getElementById(id);el.classList.add('open');el.querySelector('input,select,button')?.focus();}
         function closeModal(id){document.getElementById(id).classList.remove('open');}
@@ -531,7 +547,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
             const f=new Date(y,m,1).getDay(), d=new Date(y,m+1,0).getDate();
             for(let i=0;i<f;i++)g.innerHTML+=`<div class="month-cell bg-gray-50"></div>`;
             for(let i=1;i<=d;i++){
-                const iso=new Date(y,m,i).toISOString().split('T')[0];
+                const iso=localDateKey(new Date(y,m,i));
                 const isTod=todayLocal()===iso;
                 const hol=data.settings.holidays?HOLIDAYS[iso.substring(5)]:null;
                 const evs=data.events.filter(e=>e.date===iso);
@@ -547,7 +563,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
             document.getElementById('calRangeDisplay').innerText = `${days[0].toLocaleDateString([],{month:'short',day:'numeric'})} - ${days[6].toLocaleDateString([],{month:'short',day:'numeric'})}`;
             
             document.getElementById('weekHeader').innerHTML = `<div class="border-r bg-gray-50"></div>` + days.map((d,i) => {
-                 const iso = d.toISOString().split('T')[0];
+                 const iso = localDateKey(d);
                  const isToday = todayLocal() === iso;
                  return `<div class="day-header-cell ${isToday?'today':''}"><div class="day-name">${d.toLocaleDateString('en-US',{weekday:'short'})}</div><div class="day-num">${d.getDate()}</div></div>`;
             }).join('');
@@ -572,7 +588,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
             else state.viewDate.setDate(state.viewDate.getDate()+(d*7));
             renderAll();
         }
-        function getStartOfWeek(date) { const d = new Date(date); const day = d.getDay(); const diff = d.getDate() - day + (day === 0 ? -6 : 1); return new Date(d.setDate(diff)); }
+        function getStartOfWeek(date) { const d = new Date(date);d.setHours(12,0,0,0);d.setDate(d.getDate()-d.getDay());return d; }
         function hexToRgbA(hex, alpha){ let c; if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){ c=hex.substring(1).split(''); if(c.length==3){c=[c[0],c[0],c[1],c[1],c[2],c[2]];} c='0x'+c.join(''); return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+alpha+')';} return hex; }
 
         function renderBoard(elId, type){
@@ -601,8 +617,8 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
         function delMeal(id){data.meals=data.meals.filter(x=>x.id!=id);save();}
         function mealsToShop(){
             if(data.meals.length === 0) { alert("No meals planned!"); return; }
-            data.meals.forEach(m=>{data.list.push({id:genId(),text:`Ingr: ${escapeText(m.desc)}`,checked:false});});
-            save(); renderList(); alert("Ingredients Added!"); setView('lists');
+            data.meals.forEach(m=>{data.list.push({id:genId(),text:`Plan shopping for: ${m.desc}`,checked:false});});
+            save(); renderList(); alert("Meal reminders added. Add individual ingredients as needed."); setView('lists');
         }
         function renderList(){document.getElementById('shoppingListDisplay').innerHTML=data.list.map(i=>`<div class="flex items-center gap-3 p-2 border-b"><input type="checkbox" ${i.checked?'checked':''} onchange="togList('${i.id}')" class="w-5 h-5"><span class="flex-1 ${i.checked?'line-through text-gray-400':''}">${escapeText(i.text)}</span><button onclick="delList('${i.id}')" class="text-gray-300 hover:text-red-500">×</button></div>`).join('');}
         function addListItem(v){ if(v) {data.list.push({id:genId(),text:String(v).trim(),checked:false}); save();} }
@@ -620,10 +636,10 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
         function saveWell(){const n=document.getElementById('wlName').value;if(n){data.wellness.push({id:Date.now(),name:n,pid:document.getElementById('wlProf').value,history:[]});save();closeModal('wellnessModal');}}
         function togWell(id){const w=data.wellness.find(x=>x.id==id),t=todayLocal();if(!w.history)w.history=[];if(w.history.includes(t))w.history=w.history.filter(x=>x!=t);else w.history.push(t);save();}
         function delWell(id){data.wellness=data.wellness.filter(x=>x.id!=id);save();}
-        function renderBank(){document.getElementById('bankList').innerHTML=data.profiles.map(p=>`<div class="flex justify-between p-3 border rounded-lg"><span class="font-bold">${escapeText(p.name)}</span><div class="flex gap-2"><button onclick="modBank('${p.id}',-1)">-</button><span class="text-yellow-500 font-bold">${p.stars}⭐</span><button onclick="modBank('${p.id}',1)">+</button></div></div>`).join(''); document.getElementById('rewardsList').innerHTML=data.rewards.map(r=>`<div class="flex justify-between p-2 hover:bg-gray-50 cursor-pointer" onclick="redeemByIndex(${data.rewards.indexOf(r)})"><span>${escapeText(r.name)}</span><b>${r.cost}</b></div>`).join('');}
+        function renderBank(){const select=document.getElementById('luminaRedeemProfile');if(select){const current=select.value;select.innerHTML=data.profiles.map(p=>`<option value="${p.id}">${escapeText(p.name)}</option>`).join('');if(data.profiles.some(p=>p.id===current))select.value=current;}document.getElementById('bankList').innerHTML=data.profiles.map(p=>`<div class="flex justify-between p-3 border rounded-lg"><span class="font-bold">${escapeText(p.name)}</span><div class="flex gap-2"><button onclick="modBank('${p.id}',-1)">-</button><span class="text-yellow-500 font-bold">${p.stars}⭐</span><button onclick="modBank('${p.id}',1)">+</button></div></div>`).join(''); document.getElementById('rewardsList').innerHTML=data.rewards.map(r=>`<div class="flex justify-between p-2 hover:bg-gray-50 cursor-pointer" onclick="redeemByIndex(${data.rewards.indexOf(r)})"><span>${escapeText(r.name)}</span><b>${r.cost}</b></div>`).join('');}
         function modBank(pid,d){const p=data.profiles.find(x=>x.id==pid);p.stars+=d;save();}
         function redeemByIndex(index){const reward=data.rewards[index];if(reward)redeem(reward.name,Number(reward.cost)||0);}
-        function redeem(n,c){const p=data.profiles[0];if(p.stars>=c && confirm(`Redeem ${n}?`)){p.stars-=c;save();}else alert("Not enough stars");}
+        function redeem(n,c){const id=document.getElementById('luminaRedeemProfile')?.value;const p=data.profiles.find(x=>x.id===id)||data.profiles[0];if(!p)return alert('Add a family member first.');if(p.stars>=c && confirm(`Redeem ${n} for ${p.name}?`)){p.stars-=c;save();}else alert('Not enough stars.');}
         function saveReward(){const n=document.getElementById('rwName').value, c=document.getElementById('rwCost').value; if(n&&c){data.rewards.push({name:n,cost:parseInt(c)});save();closeModal('rewardModal');}}
 
         // --- SETTINGS ---

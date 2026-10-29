@@ -1,0 +1,106 @@
+/* Responsive Lumina layout refinements; no build required. */
+
+:root{--lumina-ink:#19374b;--lumina-muted:#536977;--lumina-ocean:#236c78;--lumina-line:#dce6e6;--lumina-bg:#f5f8f7}
+body{background:var(--lumina-bg);color:var(--lumina-ink);overflow:hidden}
+.app-layout{width:100%;height:100dvh;min-height:0;grid-template-columns:100px minmax(0,1fr)}
+.main-area{min-width:0;min-height:0;overflow:hidden}
+.sidebar{height:100%;overflow-y:auto;overflow-x:hidden;gap:10px;padding:20px 0;background:#fff;box-shadow:6px 0 25px #153b4c05}
+.sidebar .logo-box{width:52px;height:52px;margin:0 0 18px}
+.sidebar .nav-item{width:78px;min-height:64px;padding:8px 3px;border-radius:16px;flex:0 0 auto;gap:3px}
+.sidebar .nav-item span{font-size:11px;font-weight:800;letter-spacing:0}
+.sidebar .nav-item i{margin:0;font-size:22px}
+.nav-item.active{background:#e4f2f1;color:#165c6a;box-shadow:none}
+.nav-item.active span{color:#165c6a}
+.header-bar{flex:0 0 auto;gap:14px;background:#fff;min-height:76px;padding:12px clamp(20px,2.4vw,40px)}
+.header-bar>div{min-width:0}.header-bar>div:first-child{flex:1;min-width:0}.header-bar>div:last-child{flex:0 0 auto;gap:10px}
+.header-title{font-size:clamp(1.2rem,2.25vw,1.9rem);min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--lumina-ink)}
+.header-weather{max-width:240px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:10px 12px;font-size:13px;background:#eaf5f5;border-color:#c0ddde}
+.header-bar button{min-height:44px}.header-bar .bg-blue-600{background:#236c78;box-shadow:none;border-radius:13px;padding:11px 17px}
+.dropdown-menu{right:0;left:auto;max-width:calc(100vw - 24px)}
+.dropdown-item{font-size:15px;min-height:44px}
+.view-container{min-height:0;min-width:0;padding:clamp(16px,2.5vw,35px);overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable}
+.view-container.active{height:auto;flex:1;display:block}
+.lumina-hero{min-height:280px;grid-template-columns:minmax(0,1fr) minmax(280px,.95fr);border:1px solid #e5ebe7;box-shadow:0 14px 44px #23445c10}
+.lumina-hero-copy{padding:clamp(22px,3.25vw,50px)}
+.lumina-hero-art{background-position:center 54%;background-size:cover}
+.lumina-today{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:0 0 28px}
+.lumina-today-item{display:flex;gap:15px;align-items:center;min-width:0;border:1px solid var(--lumina-line);background:white;border-radius:20px;padding:18px 20px;box-shadow:0 8px 22px #28445b08}
+.lumina-today-symbol{flex:0 0 43px;width:43px;height:43px;display:grid;place-items:center;border-radius:14px;background:#e7f3f1;font-size:22px;font-weight:800;color:#206b73}
+.lumina-today-item:nth-child(2) .lumina-today-symbol{background:#fcf1e9;color:#a8563d}
+.lumina-today-item:nth-child(3) .lumina-today-symbol{background:#efedf9;color:#61558e}
+.lumina-today-item>div{min-width:0;display:flex;flex-direction:column;gap:3px}
+.lumina-today-item strong{font-size:24px;letter-spacing:-.045em;color:#19374b;line-height:1.1}
+.lumina-today-item div span{font-size:13px;font-weight:700;color:#506b77;line-height:1.35}
+.chore-board{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));align-items:start;gap:18px}
+.chore-col{min-height:0;height:auto;padding:19px;border-radius:22px;border-top-width:5px}
+.person-name{font-size:clamp(17px,1.6vw,22px)}
+.task-card{width:100%;min-height:54px;text-align:left;padding:10px 13px;margin-bottom:8px;background:#f5f8f8}
+.task-card .task-text{font-size:14px}.task-card .task-emoji{font-size:22px;flex:0 0 32px;margin-right:10px}
+.task-card.completed{opacity:1;transform:none}.progress-bg{margin-bottom:14px}
+.card{padding:clamp(16px,2.1vw,27px);border-radius:21px;margin-bottom:18px}.card h3{font-size:19px}
+.modal{padding:12px}.modal-box{max-height:min(88dvh,820px);overflow-y:auto;border-radius:22px;padding:clamp(20px,3vw,32px)}
+
+.lumina-calendar-toolbar{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:13px;padding:14px;border-bottom:1px solid var(--lumina-line);background:#fff}
+.lumina-calendar-tabs{display:flex;gap:3px;border-radius:99px;background:#f0f4f5;padding:4px;white-space:nowrap}
+.lumina-calendar-tabs button{min-height:42px;padding:8px 15px}
+.lumina-calendar-date-nav{display:flex;align-items:center;justify-content:center;gap:12px;min-width:0}
+.lumina-calendar-date-nav h2{text-align:center;min-width:0;font-size:clamp(14px,1.35vw,18px);line-height:1.3}
+.lumina-calendar-date-nav button{min-height:42px;min-width:42px;display:grid;place-items:center;border-radius:11px;background:#f6f9f9}
+.lumina-calendar-toolbar>button{min-height:43px;border-radius:12px;background:#266f7c}
+.cal-wrapper{height:100%;min-height:500px;padding:0;border-radius:22px;overflow:hidden;min-width:0}
+#view-calendar{min-width:0}
+#monthViewContainer{min-height:0;overflow-y:auto}
+#monthHeaders{grid-template-columns:repeat(7,minmax(0,1fr));font-size:12px}
+.month-grid{grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:minmax(78px,1fr);grid-template-rows:none;min-height:480px}
+.month-cell{display:block;min-width:0;min-height:70px;text-align:left;appearance:none;background:#fff;border-right:1px solid #e5eded;border-bottom:1px solid #e5eded;padding:8px;overflow:hidden;white-space:normal;transition:background .2s}
+.month-cell:focus-visible{z-index:3;outline-offset:-3px}.month-cell:hover{background:#eef6f4}
+.event-chip{display:block;max-width:100%;font-size:11px;line-height:1.3;margin-top:3px;padding:3px 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#weekViewContainer{min-height:0;min-width:0}.week-scroll{min-width:0;min-height:0;overflow:auto;flex:1;overscroll-behavior-x:contain}
+.lumina-week-track{min-width:820px;width:100%}
+.week-calendar-header,.week-grid{display:grid;grid-template-columns:60px repeat(7,minmax(0,1fr))}
+.week-calendar-header{position:sticky;top:0;z-index:18;background:#fff;border-bottom:1px solid #dee6e6}
+.week-grid{min-height:1030px}.week-grid .day-col{min-width:0}
+.day-header-cell{padding:12px 6px}.day-name,.time-slot{font-size:12px;color:#546f7d}
+.event-block{width:auto;min-height:44px;padding:7px;font-size:12px}
+.lumina-more-panel[hidden]{display:none!important}.lumina-more-panel{display:none}
+.lumina-label{display:block;color:#405b69;font-size:13px;font-weight:800;margin:12px 0 6px}
+.lumina-reward-profile{width:100%;min-height:44px;border:1px solid #cededf;border-radius:12px;padding:9px 11px;background:white;color:#19374b}
+.lumina-backup-section{margin-top:18px;padding:16px;border:1px solid #dce7e6;border-radius:16px;background:#f7faf9}
+.lumina-backup-section h4{font-size:16px;font-weight:800;color:#19374b}
+.lumina-backup-section p{font-size:13px;line-height:1.5;color:#526a78;margin:6px 0 12px}
+.lumina-backup-actions{display:flex;flex-wrap:wrap;gap:10px}
+.lumina-backup-actions button,.lumina-import-label{display:inline-flex;align-items:center;justify-content:center;padding:9px 12px;min-height:44px;background:#fff;color:#1f6573;border:1px solid #aacdce;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer}
+.lumina-import-label input{position:absolute;width:1px;height:1px;opacity:.001;clip-path:inset(50%)}.lumina-import-label:focus-within{outline:3px solid #137187;outline-offset:3px}
+.lumina-info{padding:24px 0;max-width:none}
+
+@media(max-width:1100px){.app-layout{grid-template-columns:83px minmax(0,1fr)}.sidebar .nav-item{width:70px}.lumina-hero{grid-template-columns:minmax(0,1fr) minmax(220px,.8fr)}.lumina-today{gap:10px}.lumina-today-item{padding:13px;gap:10px}}
+@media(max-width:768px){
+body,.app-layout,.main-area{height:100dvh}.app-layout{display:block;grid-template-columns:none}.sidebar{display:none}
+.bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;width:100%;height:calc(76px + env(safe-area-inset-bottom));padding:6px max(6px,env(safe-area-inset-left)) calc(6px + env(safe-area-inset-bottom));gap:3px;overflow:visible;align-items:center;justify-content:space-between;background:#fff;box-shadow:0 -8px 28px #19405016;z-index:45}
+.bottom-nav .nav-item{min-width:0;width:auto;min-height:56px;height:56px;flex:1 1 0;padding:6px 1px;gap:4px;border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.bottom-nav .nav-item i{font-size:20px;margin:0}.bottom-nav .nav-item span{font-size:11px;font-weight:800;line-height:1.1;white-space:nowrap}
+.lumina-more-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;position:fixed;z-index:44;bottom:calc(83px + env(safe-area-inset-bottom));left:12px;right:12px;background:white;border:1px solid var(--lumina-line);box-shadow:0 20px 45px #183b4a30;border-radius:20px;padding:12px}
+.lumina-more-panel button{display:flex;align-items:center;gap:10px;min-height:51px;padding:12px;background:#f2f7f6;border-radius:12px;color:#214d5f;font-size:13px;font-weight:800;text-align:left}
+.lumina-more-panel button i{font-size:18px;min-width:20px}
+.header-bar{min-height:70px;padding:10px 12px;gap:7px}.header-title{font-size:clamp(17px,4.2vw,23px);max-width:100%}
+.header-bar>div:last-child{gap:6px}.header-bar .bg-blue-600{padding:10px 11px;font-size:13px}
+.header-weather{max-width:128px;min-height:42px;padding:8px 9px;font-size:12px}
+.view-container{min-width:0;min-height:0;padding:14px 13px calc(104px + env(safe-area-inset-bottom));scrollbar-gutter:auto}
+.lumina-hero{grid-template-columns:1fr;min-height:0;margin-bottom:17px;border-radius:23px}
+.lumina-hero-copy{padding:24px 23px 14px}.lumina-hero-art{height:170px;min-height:170px;background-position:center 57%}
+.lumina-hero h2{font-size:clamp(29px,7.2vw,39px);max-width:420px}
+.lumina-today{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:20px}
+.lumina-today-item{padding:10px;gap:5px;flex-direction:column;text-align:center;border-radius:16px}
+.lumina-today-symbol{width:30px;height:30px;flex-basis:30px;font-size:17px;border-radius:10px}
+.lumina-today-item strong{font-size:21px}.lumina-today-item div span{font-size:11px}
+.chore-board{grid-template-columns:repeat(auto-fit,minmax(min(100%,245px),1fr));gap:13px}.chore-col{padding:15px;min-height:0}
+.cal-wrapper{height:auto;min-height:540px}
+.lumina-calendar-toolbar{grid-template-columns:1fr auto;gap:9px;padding:10px}
+.lumina-calendar-tabs{grid-column:1}.lumina-calendar-date-nav{grid-row:2;grid-column:1 / -1;justify-content:space-between}
+.lumina-calendar-toolbar>button{grid-column:2;grid-row:1;padding:10px 12px;font-size:13px}
+#monthViewContainer{min-height:400px}.month-grid{min-height:400px;grid-auto-rows:minmax(63px,1fr)}
+.month-cell{min-height:60px;padding:5px 4px}.event-chip{font-size:10px;padding:2px}
+.week-scroll{height:490px;overflow:auto}
+}
+@media(max-width:390px){.header-bar{padding:10px}.header-weather{max-width:100px;font-size:11px}.header-title{font-size:16px}.view-container{padding:12px 10px calc(100px + env(safe-area-inset-bottom))}.lumina-hero-copy{padding:21px 18px 12px}.lumina-hero-art{height:140px;min-height:140px}.lumina-today{gap:6px}.lumina-today-item{padding:8px 4px}.lumina-today-item strong{font-size:19px}.bottom-nav .nav-item span{font-size:10.5px}.cal-wrapper{border-radius:17px}.day-header-cell{padding:10px 3px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}

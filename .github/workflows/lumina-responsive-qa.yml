@@ -1,0 +1,41 @@
+name: Lumina responsive browser QA
+on:
+  push:
+    branches:
+      - main
+      - fix/lumina-layout-desktop-mobile-20261029
+    paths:
+      - 'index.html'
+      - 'lumina-layout.css'
+      - 'lumina-enhancements.js'
+      - 'scripts/qa_responsive.py'
+      - '.github/workflows/lumina-responsive-qa.yml'
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Chromium and Playwright
+        run: |
+          python -m pip install 'playwright==1.57.0'
+          python -m playwright install --with-deps chromium
+      - name: Test responsive site and interaction flows
+        run: |
+          python -m http.server 8000 >/tmp/lumina-server.log 2>&1 &
+          python scripts/qa_responsive.py
+      - name: Upload QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumina-browser-qa
+          path: qa/screenshots/
+          retention-days: 14
+          if-no-files-found: ignore
