@@ -72,3 +72,35 @@ body{background:var(--lumina-bg);color:var(--lumina-ink);overflow:hidden}
 .lumina-backup-actions button,.lumina-import-label{display:inline-flex;align-items:center;justify-content:center;padding:9px 12px;min-height:44px;background:#fff;color:#1f6573;border:1px solid #aacdce;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer}
 .lumina-import-label input{position:absolute;width:1px;height:1px;opacity:.001;clip-path:inset(50%)}.lumina-import-label:focus-within{outline:3px solid #137187;outline-offset:3px}
 .lumina-info{padding:24px 0;max-width:none}
+
+@media(max-width:1100px){.app-layout{grid-template-columns:83px minmax(0,1fr)}.sidebar .nav-item{width:70px}.lumina-hero{grid-template-columns:minmax(0,1fr) minmax(220px,.8fr)}.lumina-today{gap:10px}.lumina-today-item{padding:13px;gap:10px}}
+@media(max-width:768px){
+body,.app-layout,.main-area{height:100dvh}.app-layout{display:block;grid-template-columns:none}.sidebar{display:none}
+.bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;width:100%;height:calc(76px + env(safe-area-inset-bottom));padding:6px max(6px,env(safe-area-inset-left)) calc(6px + env(safe-area-inset-bottom));gap:3px;overflow:visible;align-items:center;justify-content:space-between;background:#fff;box-shadow:0 -8px 28px #19405016;z-index:45}
+.bottom-nav .nav-item{min-width:0;width:auto;min-height:56px;height:56px;flex:1 1 0;padding:6px 1px;gap:4px;border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.bottom-nav .nav-item i{font-size:20px;margin:0}.bottom-nav .nav-item span{font-size:11px;font-weight:800;line-height:1.1;white-space:nowrap}
+.lumina-more-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;position:fixed;z-index:44;bottom:calc(83px + env(safe-area-inset-bottom));left:12px;right:12px;background:white;border:1px solid var(--lumina-line);box-shadow:0 20px 45px #183b4a30;border-radius:20px;padding:12px}
+.lumina-more-panel button{display:flex;align-items:center;gap:10px;min-height:51px;padding:12px;background:#f2f7f6;border-radius:12px;color:#214d5f;font-size:13px;font-weight:800;text-align:left}
+.lumina-more-panel button i{font-size:18px;min-width:20px}
+.header-bar{min-height:70px;padding:10px 12px;gap:7px}.header-title{font-size:clamp(17px,4.2vw,23px);max-width:100%}
+.header-bar>div:last-child{gap:6px}.header-bar .bg-blue-600{padding:10px 11px;font-size:13px}
+.header-weather{max-width:128px;min-height:42px;padding:8px 9px;font-size:12px}
+.view-container{min-width:0;min-height:0;padding:14px 13px calc(104px + env(safe-area-inset-bottom));scrollbar-gutter:auto}
+.lumina-hero{grid-template-columns:1fr;min-height:0;margin-bottom:17px;border-radius:23px}
+.lumina-hero-copy{padding:24px 23px 14px}.lumina-hero-art{height:170px;min-height:170px;background-position:center 57%}
+.lumina-hero h2{font-size:clamp(29px,7.2vw,39px);max-width:420px}
+.lumina-today{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:20px}
+.lumina-today-item{padding:10px;gap:5px;flex-direction:column;text-align:center;border-radius:16px}
+.lumina-today-symbol{width:30px;height:30px;flex-basis:30px;font-size:17px;border-radius:10px}
+.lumina-today-item strong{font-size:21px}.lumina-today-item div span{font-size:11px}
+.chore-board{grid-template-columns:repeat(auto-fit,minmax(min(100%,245px),1fr));gap:13px}.chore-col{padding:15px;min-height:0}
+.cal-wrapper{height:auto;min-height:540px}
+.lumina-calendar-toolbar{grid-template-columns:1fr auto;gap:9px;padding:10px}
+.lumina-calendar-tabs{grid-column:1}.lumina-calendar-date-nav{grid-row:2;grid-column:1 / -1;justify-content:space-between}
+.lumina-calendar-toolbar>button{grid-column:2;grid-row:1;padding:10px 12px;font-size:13px}
+#monthViewContainer{min-height:400px}.month-grid{min-height:400px;grid-auto-rows:minmax(63px,1fr)}
+.month-cell{min-height:60px;padding:5px 4px}.event-chip{font-size:10px;padding:2px}
+.week-scroll{height:490px;overflow:auto}
+}
+@media(max-width:390px){.header-bar{padding:10px}.header-weather{max-width:100px;font-size:11px}.header-title{font-size:16px}.view-container{padding:12px 10px calc(100px + env(safe-area-inset-bottom))}.lumina-hero-copy{padding:21px 18px 12px}.lumina-hero-art{height:140px;min-height:140px}.lumina-today{gap:6px}.lumina-today-item{padding:8px 4px}.lumina-today-item strong{font-size:19px}.bottom-nav .nav-item span{font-size:10.5px}.cal-wrapper{border-radius:17px}.day-header-cell{padding:10px 3px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
