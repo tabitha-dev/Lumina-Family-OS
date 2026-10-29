@@ -1,1 +1,41 @@
 /* Responsive Lumina layout refinements; no build required. */
+
+:root{--lumina-ink:#19374b;--lumina-muted:#536977;--lumina-ocean:#236c78;--lumina-line:#dce6e6;--lumina-bg:#f5f8f7}
+body{background:var(--lumina-bg);color:var(--lumina-ink);overflow:hidden}
+.app-layout{width:100%;height:100dvh;min-height:0;grid-template-columns:100px minmax(0,1fr)}
+.main-area{min-width:0;min-height:0;overflow:hidden}
+.sidebar{height:100%;overflow-y:auto;overflow-x:hidden;gap:10px;padding:20px 0;background:#fff;box-shadow:6px 0 25px #153b4c05}
+.sidebar .logo-box{width:52px;height:52px;margin:0 0 18px}
+.sidebar .nav-item{width:78px;min-height:64px;padding:8px 3px;border-radius:16px;flex:0 0 auto;gap:3px}
+.sidebar .nav-item span{font-size:11px;font-weight:800;letter-spacing:0}
+.sidebar .nav-item i{margin:0;font-size:22px}
+.nav-item.active{background:#e4f2f1;color:#165c6a;box-shadow:none}
+.nav-item.active span{color:#165c6a}
+.header-bar{flex:0 0 auto;gap:14px;background:#fff;min-height:76px;padding:12px clamp(20px,2.4vw,40px)}
+.header-bar>div{min-width:0}.header-bar>div:first-child{flex:1;min-width:0}.header-bar>div:last-child{flex:0 0 auto;gap:10px}
+.header-title{font-size:clamp(1.2rem,2.25vw,1.9rem);min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--lumina-ink)}
+.header-weather{max-width:240px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:10px 12px;font-size:13px;background:#eaf5f5;border-color:#c0ddde}
+.header-bar button{min-height:44px}.header-bar .bg-blue-600{background:#236c78;box-shadow:none;border-radius:13px;padding:11px 17px}
+.dropdown-menu{right:0;left:auto;max-width:calc(100vw - 24px)}
+.dropdown-item{font-size:15px;min-height:44px}
+.view-container{min-height:0;min-width:0;padding:clamp(16px,2.5vw,35px);overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable}
+.view-container.active{height:auto;flex:1;display:block}
+.lumina-hero{min-height:280px;grid-template-columns:minmax(0,1fr) minmax(280px,.95fr);border:1px solid #e5ebe7;box-shadow:0 14px 44px #23445c10}
+.lumina-hero-copy{padding:clamp(22px,3.25vw,50px)}
+.lumina-hero-art{background-position:center 54%;background-size:cover}
+.lumina-today{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:0 0 28px}
+.lumina-today-item{display:flex;gap:15px;align-items:center;min-width:0;border:1px solid var(--lumina-line);background:white;border-radius:20px;padding:18px 20px;box-shadow:0 8px 22px #28445b08}
+.lumina-today-symbol{flex:0 0 43px;width:43px;height:43px;display:grid;place-items:center;border-radius:14px;background:#e7f3f1;font-size:22px;font-weight:800;color:#206b73}
+.lumina-today-item:nth-child(2) .lumina-today-symbol{background:#fcf1e9;color:#a8563d}
+.lumina-today-item:nth-child(3) .lumina-today-symbol{background:#efedf9;color:#61558e}
+.lumina-today-item>div{min-width:0;display:flex;flex-direction:column;gap:3px}
+.lumina-today-item strong{font-size:24px;letter-spacing:-.045em;color:#19374b;line-height:1.1}
+.lumina-today-item div span{font-size:13px;font-weight:700;color:#506b77;line-height:1.35}
+.chore-board{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));align-items:start;gap:18px}
+.chore-col{min-height:0;height:auto;padding:19px;border-radius:22px;border-top-width:5px}
+.person-name{font-size:clamp(17px,1.6vw,22px)}
+.task-card{width:100%;min-height:54px;text-align:left;padding:10px 13px;margin-bottom:8px;background:#f5f8f8}
+.task-card .task-text{font-size:14px}.task-card .task-emoji{font-size:22px;flex:0 0 32px;margin-right:10px}
+.task-card.completed{opacity:1;transform:none}.progress-bg{margin-bottom:14px}
+.card{padding:clamp(16px,2.1vw,27px);border-radius:21px;margin-bottom:18px}.card h3{font-size:19px}
+.modal{padding:12px}.modal-box{max-height:min(88dvh,820px);overflow-y:auto;border-radius:22px;padding:clamp(20px,3vw,32px)}
