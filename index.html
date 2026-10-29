@@ -460,8 +460,11 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
         function setView(id){
             document.querySelectorAll('.view-container').forEach(e=>e.classList.remove('active'));
             const panel=document.getElementById('view-'+id);if(!panel)return;panel.classList.add('active');panel.scrollTop=0;toggleMobileMore(false);
-            document.querySelectorAll('.nav-item').forEach(e=>{e.classList.remove('active');e.removeAttribute('aria-current');});
-            document.querySelectorAll(`.nav-item[onclick="setView('${id}')"]`).forEach(e=>{e.classList.add('active');e.setAttribute('aria-current','page');});
+            document.querySelectorAll('.nav-item').forEach(e=>{
+                const current=e.getAttribute('onclick')===`setView('${id}')` || (['wellness','bank'].includes(id)&&e.id==='luminaMoreButton');
+                e.classList.toggle('active',current);
+                if(current)e.setAttribute('aria-current','page');else e.removeAttribute('aria-current');
+            });
             if(id==='calendar')setCalMode(state.calMode);
         }
         function openModal(id){const el=document.getElementById(id);el.classList.add('open');el.querySelector('input,select,button')?.focus();}
