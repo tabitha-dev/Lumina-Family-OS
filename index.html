@@ -244,7 +244,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
             <button type="button" class="nav-item active" onclick="setView('routines')"><i class="fa-solid fa-clipboard-check text-teal-500"></i><span>Routines</span></button>
             <button type="button" class="nav-item" onclick="setView('calendar')"><i class="fa-solid fa-calendar-days text-blue-500"></i><span>Calendar</span></button>
             <button type="button" class="nav-item" onclick="setView('chores')"><i class="fa-solid fa-broom text-purple-500"></i><span>Chores</span></button>
-            <button type="button" class="nav-item" onclick="setView('meals')"><i class="fa-solid fa-utensils text-orange-400"></i><span>Meals</span></button>
+            <button type="button" class="nav-item" onclick="setView('meals')"><i class="fa-solid fa-utensils text-orange-400"></i><span>Meals</span></button><button type="button" class="nav-item" onclick="setView('wellness')"><i class="fa-solid fa-heart-pulse text-rose-500"></i><span>Wellness</span></button>
             <button type="button" class="nav-item" onclick="setView('lists')"><i class="fa-solid fa-basket-shopping text-green-500"></i><span>Lists</span></button>
             <button type="button" class="nav-item" onclick="setView('bank')"><i class="fa-solid fa-piggy-bank text-yellow-500"></i><span>Bank</span></button>
             <div style="flex:1"></div>
@@ -273,7 +273,11 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
             <!-- VIEW: ROUTINES -->
             <div id="view-routines" class="view-container active">
                 <section class="lumina-hero" aria-labelledby="luminaHeroHeading"><div class="lumina-hero-copy"><span class="lumina-eyebrow">A CALMER FAMILY DAY</span><h2 id="luminaHeroHeading">Make room for the moments that matter.</h2><p>One welcoming place for plans, routines, and little wins.</p><div class="lumina-hero-actions"><button type="button" onclick="openAddEvent()">Add an event</button><button type="button" class="lumina-secondary" onclick="openQuickAdd()">Quick add</button></div></div><div class="lumina-hero-art" aria-hidden="true"></div></section><div class="lumina-section-heading"><h2>Daily routines</h2><span>Small steps, big wins</span></div>
-                <div id="routineBoard" class="chore-board"></div><section class="lumina-info" aria-labelledby="luminaInfoTitle"><h2 id="luminaInfoTitle">About Lumina Family OS</h2><details><summary>What can I organize here?</summary><p>Plan routines, chores, family events, meal ideas, shopping lists, wellness habits and star rewards in one browser-based home dashboard.</p></details><details><summary>Is Lumina free, and where is my data saved?</summary><p>Lumina is free and needs no sign-in. Changes are stored in this browser on this device. They do not automatically sync between devices. Clear browser site data to remove them.</p></details><details><summary>Does Lumina access my location?</summary><p>No automatic location request is needed. Set a city in Settings to look up current weather with Open-Meteo. Recipe searches are sent to TheMealDB.</p></details></section>
+                <section class="lumina-today" aria-label="Today at a glance">
+  <div class="lumina-today-item"><span class="lumina-today-symbol" aria-hidden="true">✓</span><div><strong id="luminaRoutinesDone">0 / 0</strong><span>Routines completed</span></div></div>
+  <div class="lumina-today-item"><span class="lumina-today-symbol" aria-hidden="true">▦</span><div><strong id="luminaEventsToday">0</strong><span>Today's events</span></div></div>
+  <div class="lumina-today-item"><span class="lumina-today-symbol" aria-hidden="true">◈</span><div><strong id="luminaShoppingCount">0</strong><span>Shopping items left</span></div></div>
+</section><div id="routineBoard" class="chore-board"></div><section class="lumina-info" aria-labelledby="luminaInfoTitle"><h2 id="luminaInfoTitle">About Lumina Family OS</h2><details><summary>What can I organize here?</summary><p>Plan routines, chores, family events, meal ideas, shopping lists, wellness habits and star rewards in one browser-based home dashboard.</p></details><details><summary>Is Lumina free, and where is my data saved?</summary><p>Lumina is free and needs no sign-in. Changes are stored in this browser on this device. They do not automatically sync between devices. Clear browser site data to remove them.</p></details><details><summary>Does Lumina access my location?</summary><p>No automatic location request is needed. Set a city in Settings to look up current weather with Open-Meteo. Recipe searches are sent to TheMealDB.</p></details></section>
             </div>
             
             <!-- VIEW: CHORES -->
@@ -285,15 +289,15 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
             <!-- VIEW: CALENDAR -->
             <div id="view-calendar" class="view-container" style="padding: 20px;">
                 <div class="cal-wrapper">
-                    <div class="flex justify-between items-center p-4 border-b border-gray-200 bg-white z-20">
-                         <div class="flex gap-1 bg-gray-100 p-1 rounded-full">
+                    <div class="lumina-calendar-toolbar">
+                         <div class="lumina-calendar-tabs">
                              <button onclick="setCalMode('month')" id="btnMonth" class="toggle-btn inactive">Month</button>
                              <button onclick="setCalMode('week')" id="btnWeek" class="toggle-btn active">Week</button>
                          </div>
-                         <div class="flex items-center gap-4">
-                             <button onclick="navCal(-1)"><i class="fa-solid fa-chevron-left text-xl text-gray-400 hover:text-black"></i></button>
+                         <div class="lumina-calendar-date-nav">
+                             <button type="button" aria-label="Previous calendar period" onclick="navCal(-1)"><i class="fa-solid fa-chevron-left text-xl text-gray-400 hover:text-black"></i></button>
                              <h2 id="calRangeDisplay" class="text-xl font-bold text-gray-800">Month</h2>
-                             <button onclick="navCal(1)"><i class="fa-solid fa-chevron-right text-xl text-gray-400 hover:text-black"></i></button>
+                             <button type="button" aria-label="Next calendar period" onclick="navCal(1)"><i class="fa-solid fa-chevron-right text-xl text-gray-400 hover:text-black"></i></button>
                          </div>
                          <button onclick="openAddEvent()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm">+ Event</button>
                     </div>
@@ -304,9 +308,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
                     </div>
 
                     <div id="weekViewContainer" class="flex flex-col flex-1 h-full overflow-hidden">
-                         <div class="grid grid-template-columns-8 border-b bg-white z-10" style="grid-template-columns: 60px repeat(7, 1fr);" id="weekHeader"></div>
-                         <div class="week-scroll">
-                             <div class="week-grid">
+                         <div class="week-scroll" id="luminaWeekScroll" tabindex="0" role="region" aria-label="Scrollable weekly calendar"><div class="lumina-week-track"><div class="week-calendar-header" id="weekHeader"></div><div class="week-grid">
                                  <div class="time-col">
                                      <div class="time-slot">8 AM</div><div class="time-slot">9 AM</div><div class="time-slot">10 AM</div><div class="time-slot">11 AM</div>
                                      <div class="time-slot">12 PM</div><div class="time-slot">1 PM</div><div class="time-slot">2 PM</div><div class="time-slot">3 PM</div>
@@ -315,16 +317,16 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
                                  </div>
                                  <div id="wc0" class="day-col"></div> <div id="wc1" class="day-col"></div> <div id="wc2" class="day-col"></div> <div id="wc3" class="day-col"></div>
                                  <div id="wc4" class="day-col"></div> <div id="wc5" class="day-col"></div> <div id="wc6" class="day-col"></div>
-                             </div>
+                             </div></div>
                          </div>
                     </div>
                 </div>
             </div>
 
-            <div id="view-meals" class="view-container"><div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><div class="card"><h3>Menu <button onclick="openMealModal()" class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full">+ Plan</button></h3><div id="mealList" class="space-y-3 mt-2"></div><button onclick="mealsToShop()" class="w-full mt-4 py-2 border border-dashed border-gray-300 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50">Add Ingredients to List</button></div><div class="card"><h3>Recipe Finder</h3><div class="flex gap-2 mb-4 mt-2"><input id="recipeSearch" class="flex-1 border p-2 rounded-lg text-sm" placeholder="Search (e.g. Pasta)"><button onclick="searchRecipes()" class="bg-blue-600 text-white px-4 rounded-lg text-sm font-bold">Go</button></div><div id="recipeResults" class="space-y-2 max-h-60 overflow-y-auto"></div></div></div></div>
+            <div id="view-meals" class="view-container"><div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><div class="card"><h3>Menu <button onclick="openMealModal()" class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full">+ Plan</button></h3><div id="mealList" class="space-y-3 mt-2"></div><button onclick="mealsToShop()" class="w-full mt-4 py-2 border border-dashed border-gray-300 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50">Add meal reminders to shopping list</button></div><div class="card"><h3>Recipe Finder</h3><div class="flex gap-2 mb-4 mt-2"><input id="recipeSearch" class="flex-1 border p-2 rounded-lg text-sm" placeholder="Search (e.g. Pasta)"><button onclick="searchRecipes()" class="bg-blue-600 text-white px-4 rounded-lg text-sm font-bold">Go</button></div><div id="recipeResults" class="space-y-2 max-h-60 overflow-y-auto"></div></div></div></div>
             <div id="view-lists" class="view-container"><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div class="card"><h3>Shopping <button onclick="clearCheckedList()" class="text-sm text-red-500">Clear</button></h3><div class="flex gap-2 mb-4 mt-2"><input id="listInput" class="flex-1 border p-2 rounded-lg text-sm" placeholder="Add item..." onkeydown="if(event.key==='Enter') addListFromInput()"><button onclick="addListFromInput()" class="bg-purple-500 text-white px-4 rounded-lg font-bold">Add</button></div><div id="shoppingListDisplay" class="space-y-2 max-h-96 overflow-y-auto"></div></div><div class="card"><h3>Pantry <button onclick="openInputModal('Item Name', addPantryItem)" class="text-sm text-blue-600">+ Item</button></h3><div id="pantryList" class="space-y-2 mt-2 max-h-96 overflow-y-auto"></div></div></div></div>
             <div id="view-wellness" class="view-container"><div class="card h-full"><h3>Wellness <button onclick="openWellnessModal()" class="text-sm text-rose-500">+ Habit</button></h3><div id="wellnessList" class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div></div></div>
-            <div id="view-bank" class="view-container"><div class="grid grid-cols-1 md:grid-cols-2 gap-8"><div class="card"><h3>Balances</h3><div id="bankList" class="space-y-4 mt-2"></div></div><div class="card"><h3>Rewards <button onclick="openModal('rewardModal')" class="text-xs text-blue-500 ml-2">+ New</button></h3><div id="rewardsList" class="space-y-2 mt-2"></div></div></div></div>
+            <div id="view-bank" class="view-container"><div class="grid grid-cols-1 md:grid-cols-2 gap-8"><div class="card"><h3>Balances</h3><label for="luminaRedeemProfile" class="lumina-label">Redeem rewards for</label><select id="luminaRedeemProfile" class="lumina-reward-profile" aria-label="Select family member for reward redemption"></select><div id="bankList" class="space-y-4 mt-2"></div></div><div class="card"><h3>Rewards <button onclick="openModal('rewardModal')" class="text-xs text-blue-500 ml-2">+ New</button></h3><div id="rewardsList" class="space-y-2 mt-2"></div></div></div></div>
         </div>
 
         <nav class="bottom-nav" aria-label="Mobile navigation">
@@ -333,7 +335,14 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
             <button type="button" class="nav-item" onclick="setView('chores')"><i class="fa-solid fa-broom"></i><span>Chores</span></button>
             <button type="button" class="nav-item" onclick="setView('meals')"><i class="fa-solid fa-utensils"></i><span>Meals</span></button>
             <button type="button" class="nav-item" onclick="setView('lists')"><i class="fa-solid fa-basket-shopping"></i><span>Lists</span></button>
+            <button type="button" class="nav-item lumina-more-trigger" id="luminaMoreButton" aria-label="More family sections" aria-expanded="false" aria-controls="luminaMoreMenu" onclick="toggleMobileMore()"><i class="fa-solid fa-ellipsis" aria-hidden="true"></i><span>More</span></button>
         </nav>
+        <div class="lumina-more-panel" id="luminaMoreMenu" hidden>
+          <button type="button" onclick="setView('wellness')"><i class="fa-solid fa-heart-pulse" aria-hidden="true"></i> Wellness</button>
+          <button type="button" onclick="setView('bank')"><i class="fa-solid fa-piggy-bank" aria-hidden="true"></i> Rewards &amp; stars</button>
+          <button type="button" onclick="toggleSleep(true);toggleMobileMore(false)"><i class="fa-solid fa-moon" aria-hidden="true"></i> Sleep display</button>
+          <button type="button" onclick="openSettings();toggleMobileMore(false)"><i class="fa-solid fa-gear" aria-hidden="true"></i> Settings</button>
+        </div>
     </div>
 
     <!-- MODALS -->
@@ -341,7 +350,7 @@ body{height:100dvh}.app-layout,.main-area{height:100dvh;min-width:0}.app-layout{
     <div id="settingsModal" class="modal" role="dialog" aria-modal="true" aria-label="settings"><div class="modal-box"><h3 class="text-xl font-bold mb-4">Settings</h3><div class="space-y-4"><input id="famNameInput" class="w-full border p-2 rounded-lg" placeholder="Family Name" onchange="updateFamName()"><input id="locInput" class="w-full border p-2 rounded-lg" placeholder="City (for Weather)" onchange="updateLocation()"><div id="setProfList" class="space-y-2 mb-2"></div><button onclick="addNewProfile()" class="text-blue-600 font-bold text-sm">+ Add Person</button><div class="flex justify-between border-t pt-4"><span class="font-bold">Show Holidays</span><input type="checkbox" id="holTog" onchange="toggleHolidays()" class="w-5 h-5 accent-blue-600"></div>
     <!-- Photo Upload -->
     <div class="flex justify-between items-center border-t pt-4"><span class="font-bold text-sm">Sleep Background</span><label class="cursor-pointer text-blue-500 text-sm font-bold hover:underline">Upload <input type="file" class="hidden" accept="image/*" onchange="uploadSleepBg(this)"></label></div>
-    <button onclick="resetApp()" class="w-full text-red-500 border border-red-100 py-2 rounded-lg font-bold mt-2">Factory Reset</button></div><button onclick="closeModal('settingsModal')" class="mt-4 w-full text-gray-400">Close</button></div></div>
+    <div class="lumina-backup-section"><h4>Keep a copy of your family plans</h4><p>Data stays in this browser. A backup makes moving to another device easier.</p><div class="lumina-backup-actions"><button type="button" onclick="downloadFamilyBackup()">Download backup</button><label class="lumina-import-label">Restore backup<input type="file" accept=".json,application/json" onchange="restoreFamilyBackup(event)"></label></div></div><button onclick="resetApp()" class="w-full text-red-500 border border-red-100 py-2 rounded-lg font-bold mt-2">Factory Reset</button></div><button onclick="closeModal('settingsModal')" class="mt-4 w-full text-gray-400">Close</button></div></div>
     
     <!-- Event Modal -->
     <div id="eventModal" class="modal" role="dialog" aria-modal="true" aria-label="event">
